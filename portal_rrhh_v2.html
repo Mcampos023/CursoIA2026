@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de RRHH</title>
+  <style>
+    /* =========================================================
+       Portal de RRHH - Estilos base
+       Zona personalizable: colores institucionales, radios,
+       sombras, tipografías y espaciados.
+       ========================================================= */
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-2: #f8f9fc;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --black: #090909;
+      --gold: #c8a246;
+      --gold-2: #f1d27a;
+      --accent: #0f62fe;
+      --success: #12805c;
+      --danger: #c62828;
+      --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --sidebar-width: 310px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(200,162,70,.14), transparent 32rem),
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Encabezado negro con título dorado */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, #050505 0%, #171717 100%);
+      color: #fff;
+      border-bottom: 1px solid rgba(241,210,122,.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,.24);
+    }
+    .header-inner {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem clamp(1rem, 2vw, 2rem);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: #111;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold));
+      font-weight: 900;
+      box-shadow: 0 8px 22px rgba(200,162,70,.28);
+      flex: 0 0 auto;
+    }
+    .brand h1 {
+      margin: 0;
+      color: var(--gold-2);
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      letter-spacing: .03em;
+      line-height: 1.1;
+    }
+    .brand p {
+      margin: .2rem 0 0;
+      color: rgba(255,255,255,.72);
+      font-size: .88rem;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .pill-status {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .55rem .8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(241,210,122,.28);
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.06);
+      font-size: .86rem;
+      white-space: nowrap;
+    }
+    .dot {
+      width: .55rem;
+      height: .55rem;
+      border-radius: 50%;
+      background: var(--gold-2);
+      box-shadow: 0 0 0 5px rgba(241,210,122,.12);
+    }
+    .mobile-sidebar-btn {
+      display: none;
+      border: 1px solid rgba(241,210,122,.45);
+      background: transparent;
+      color: var(--gold-2);
+      border-radius: 12px;
+      padding: .6rem .75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 1.2rem;
+      padding: 1.2rem clamp(1rem, 2vw, 2rem) 2rem;
+    }
+
+    /* Panel lateral por Gerencia */
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      height: calc(100vh - 110px);
+      align-self: start;
+      overflow: auto;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+    }
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .8rem;
+      margin-bottom: .8rem;
+    }
+    .sidebar h2,
+    .section-title h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: .01em;
+    }
+    .small-help { color: var(--muted); font-size: .84rem; margin: .25rem 0 0; }
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: .48rem .7rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .ghost-btn:hover { border-color: var(--gold); }
+
+    .gerencia-list { display: grid; gap: .65rem; }
+    details.gerencia {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      overflow: clip;
+    }
+    details.gerencia[open] { box-shadow: 0 10px 24px rgba(31,41,55,.06); }
+    .gerencia summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .7rem;
+      padding: .8rem .85rem;
+      font-weight: 800;
+    }
+    .gerencia summary::-webkit-details-marker { display: none; }
+    .gerencia-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .count-badge {
+      flex: 0 0 auto;
+      min-width: 34px;
+      text-align: center;
+      border-radius: 999px;
+      padding: .18rem .45rem;
+      background: rgba(200,162,70,.16);
+      color: #694f12;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .person-list { padding: .2rem .65rem .75rem; display: grid; gap: .4rem; }
+    .person-link {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: .55rem;
+      align-items: center;
+      padding: .48rem;
+      border-radius: 12px;
+      color: var(--text);
+    }
+    .person-link:hover,
+    .person-link.active { background: #f6f0df; }
+    .person-link img,
+    .avatar-xs {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      background: #eee;
+    }
+    .person-link strong,
+    .person-link span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .person-link strong { font-size: .88rem; }
+    .person-link span { font-size: .75rem; color: var(--muted); }
+
+    main { min-width: 0; display: grid; gap: 1rem; }
+    .card {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+    }
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 220px 220px auto;
+      gap: .75rem;
+      align-items: end;
+    }
+    label { display: grid; gap: .3rem; font-size: .78rem; color: var(--muted); font-weight: 800; }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: .78rem .85rem;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(200,162,70,.15); }
+    .primary-btn {
+      border: 0;
+      background: linear-gradient(135deg, #1f2937, #0b0b0b);
+      color: var(--gold-2);
+      border-radius: 13px;
+      padding: .82rem .95rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(0,0,0,.14);
+    }
+    .primary-btn:hover { transform: translateY(-1px); }
+
+    .status-box {
+      display: none;
+      border-radius: 14px;
+      padding: .9rem 1rem;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .status-box.show { display: block; }
+    .status-box.loading { color: #674d0b; background: #fff9e8; border-color: rgba(200,162,70,.35); }
+    .status-box.error { color: var(--danger); background: #fff1f1; border-color: #ffcdd2; }
+    .status-box.empty { color: var(--muted); background: #f8fafc; }
+
+    /* Indicadores rápidos */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .9rem;
+    }
+    .kpi {
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #fff, #fafafa);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(15,23,42,.05);
+      min-width: 0;
+    }
+    .kpi span { color: var(--muted); font-size: .8rem; font-weight: 800; }
+    .kpi strong { display: block; margin-top: .35rem; font-size: clamp(1.45rem, 3vw, 2rem); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    .section-title {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: .85rem;
+    }
+
+    /* Ficha de persona seleccionada */
+    .profile {
+      display: grid;
+      grid-template-columns: 138px minmax(0, 1fr);
+      gap: 1.1rem;
+      align-items: center;
+    }
+    .profile-photo {
+      width: 138px;
+      height: 138px;
+      border-radius: 28px;
+      object-fit: cover;
+      background: #eceff3;
+      border: 5px solid #fff;
+      box-shadow: 0 14px 32px rgba(15,23,42,.16);
+    }
+    .profile h2 { margin: 0 0 .35rem; font-size: clamp(1.35rem, 3vw, 2.15rem); }
+    .profile-role { color: var(--muted); font-weight: 700; margin: 0 0 .8rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .32rem;
+      border-radius: 999px;
+      padding: .42rem .64rem;
+      font-size: .82rem;
+      font-weight: 800;
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .chip.gold { background: rgba(200,162,70,.17); color: #664c0f; }
+    .profile-details {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .75rem;
+    }
+    .detail {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: .8rem;
+      min-width: 0;
+    }
+    .detail span { display: block; color: var(--muted); font-size: .78rem; font-weight: 900; margin-bottom: .25rem; }
+    .detail strong, .detail a { overflow-wrap: anywhere; color: var(--text); text-decoration: none; }
+    .detail a:hover { color: var(--accent); text-decoration: underline; }
+    .no-selection { color: var(--muted); padding: .75rem 0; }
+
+    /* Gráfico de distribución por Gerencia */
+    .chart { display: grid; gap: .65rem; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 210px) 1fr 38px;
+      gap: .7rem;
+      align-items: center;
+      font-size: .88rem;
+    }
+    .bar-label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-weight: 800;
+    }
+    .bar-track {
+      height: .85rem;
+      background: #eef2f7;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold), #111827);
+      transition: width .45s ease;
+    }
+    .bar-num { color: var(--muted); font-weight: 900; text-align: right; }
+
+    /* Tabla dinámica */
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 850px; }
+    th, td { padding: .75rem .8rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #111827;
+      color: var(--gold-2);
+      font-size: .78rem;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    tr:hover td { background: #fffbef; }
+    .row-user { display: flex; align-items: center; gap: .6rem; min-width: 210px; }
+    .table-action {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .45rem .6rem;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .table-action:hover { border-color: var(--gold); background: #fff8e8; }
+
+    footer { color: var(--muted); text-align: center; padding: 1.2rem 0 0; font-size: .85rem; }
+    .hide { display: none !important; }
+
+    @media (max-width: 1100px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: fixed;
+        inset: 76px 1rem auto 1rem;
+        height: min(78vh, 680px);
+        z-index: 60;
+        transform: translateY(-120%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .22s ease, opacity .22s ease;
+      }
+      body.sidebar-open .sidebar { transform: translateY(0); opacity: 1; pointer-events: auto; }
+      .mobile-sidebar-btn { display: inline-flex; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .header-inner { align-items: start; }
+      .brand p, .pill-status { display: none; }
+      .toolbar { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .profile { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      .profile-details { grid-template-columns: 1fr; text-align: left; width: 100%; }
+      .bar-row { grid-template-columns: 1fr; gap: .28rem; }
+      .bar-num { text-align: left; }
+    }
+    @media (max-width: 460px) {
+      .kpis { grid-template-columns: 1fr; }
+      .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+      .mobile-sidebar-btn { padding: .52rem .62rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand" aria-label="Identidad del portal">
+        <div class="brand-mark">RH</div>
+        <div>
+          <h1>Portal de RRHH</h1>
+          <p>Directorio dinámico conectado a Google Sheets</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="pill-status"><span class="dot"></span><span id="lastUpdate">Cargando datos...</span></span>
+        <button class="mobile-sidebar-btn" id="sidebarToggle" type="button">Gerencias</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Panel lateral por Gerencia">
+      <div class="sidebar-top">
+        <div>
+          <h2>Gerencias</h2>
+          <p class="small-help">Expandir, contraer y seleccionar personas</p>
+        </div>
+        <button class="ghost-btn" id="collapseAll" type="button">Contraer</button>
+      </div>
+      <div class="gerencia-list" id="gerenciaList"></div>
+    </aside>
+
+    <main>
+      <section class="card" aria-label="Controles de búsqueda y filtros">
+        <!-- Construcción de componentes: buscador y filtros dinámicos -->
+        <div class="toolbar">
+          <label>
+            Buscar
+            <input id="searchInput" type="search" placeholder="Nombre, correo, puesto, grupo o gerencia" autocomplete="off" />
+          </label>
+          <label>
+            Filtrar por Gerencia
+            <select id="gerenciaFilter"><option value="">Todas las gerencias</option></select>
+          </label>
+          <label>
+            Filtrar por Grupo
+            <select id="grupoFilter"><option value="">Todos los grupos</option></select>
+          </label>
+          <button class="primary-btn" id="clearFilters" type="button">Limpiar</button>
+        </div>
+      </section>
+
+      <div class="status-box loading show" id="statusBox">Conectando con Google Sheets y cargando registros...</div>
+
+      <section class="kpis" aria-label="Indicadores rápidos">
+        <article class="kpi"><span>Total registros</span><strong id="kpiTotal">0</strong></article>
+        <article class="kpi"><span>Gerencias</span><strong id="kpiGerencias">0</strong></article>
+        <article class="kpi"><span>Grupos</span><strong id="kpiGrupos">0</strong></article>
+        <article class="kpi"><span>Coincidencias</span><strong id="kpiFiltered">0</strong></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="card" aria-label="Ficha de persona seleccionada">
+          <div class="section-title">
+            <div>
+              <h2>Ficha de colaborador</h2>
+              <p class="small-help">Seleccione una persona desde el panel o la tabla</p>
+            </div>
+          </div>
+          <div id="profileContainer" class="no-selection">No hay una persona seleccionada.</div>
+        </article>
+
+        <article class="card" aria-label="Gráfico de distribución por Gerencia">
+          <div class="section-title">
+            <div>
+              <h2>Distribución por Gerencia</h2>
+              <p class="small-help">Gráfico generado sin librerías externas</p>
+            </div>
+          </div>
+          <div class="chart" id="chartContainer"></div>
+        </article>
+      </section>
+
+      <section class="card" aria-label="Tabla dinámica de registros">
+        <div class="section-title">
+          <div>
+            <h2>Registros</h2>
+            <p class="small-help">Tabla dinámica actualizada según búsqueda y filtros</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Gerencia</th>
+                <th>Puesto</th>
+                <th>Grupo</th>
+                <th>Género</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>Portal de RRHH · Datos cargados dinámicamente desde Google Sheets publicado como CSV</footer>
+    </main>
+  </div>
+
+  <script>
+    /* =========================================================
+       Conexión con Google Sheets
+       Este enlace debe permanecer publicado como CSV para que fetch()
+       pueda leerlo desde una página estática como GitHub Pages.
+       ========================================================= */
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-2kRZP0cXJV92YzCUw0Mkjkl-_l8Y7OM2VHkl7Wxr3qorbtGkk0O1InjMMMWzkPRorZUiJum7rL-4/pub?gid=0&single=true&output=csv';
+
+    const REQUIRED_COLUMNS = ['Nombre', 'Correo', 'Grupo', 'Genero', 'Gerencia', 'Puesto', 'Url'];
+
+    const state = {
+      people: [],
+      filtered: [],
+      selectedId: null,
+      expanded: new Set()
+    };
+
+    const els = {
+      lastUpdate: document.getElementById('lastUpdate'),
+      statusBox: document.getElementById('statusBox'),
+      sidebarToggle: document.getElementById('sidebarToggle'),
+      collapseAll: document.getElementById('collapseAll'),
+      gerenciaList: document.getElementById('gerenciaList'),
+      searchInput: document.getElementById('searchInput'),
+      gerenciaFilter: document.getElementById('gerenciaFilter'),
+      grupoFilter: document.getElementById('grupoFilter'),
+      clearFilters: document.getElementById('clearFilters'),
+      kpiTotal: document.getElementById('kpiTotal'),
+      kpiGerencias: document.getElementById('kpiGerencias'),
+      kpiGrupos: document.getElementById('kpiGrupos'),
+      kpiFiltered: document.getElementById('kpiFiltered'),
+      profileContainer: document.getElementById('profileContainer'),
+      chartContainer: document.getElementById('chartContainer'),
+      tableBody: document.getElementById('tableBody')
+    };
+
+    /* Placeholder si la imagen falla o si la URL viene vacía */
+    const PLACEHOLDER = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#f1d27a"/>
+            <stop offset="1" stop-color="#111827"/>
+          </linearGradient>
+        </defs>
+        <rect width="220" height="220" rx="34" fill="#f3f4f6"/>
+        <circle cx="110" cy="82" r="38" fill="url(#g)" opacity=".9"/>
+        <path d="M45 187c10-45 120-45 130 0" fill="url(#g)" opacity=".9"/>
+      </svg>
+    `);
+
+    function showStatus(type, message) {
+      els.statusBox.className = `status-box ${type || ''} ${message ? 'show' : ''}`;
+      els.statusBox.textContent = message || '';
+    }
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function normalize(value = '') {
+      return String(value)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+    }
+
+    function valueOrNA(value) {
+      const clean = String(value || '').trim();
+      return clean || 'No especificado';
+    }
+
+    /* =========================================================
+       Procesamiento de CSV
+       Parser compatible con campos entre comillas, comas internas,
+       comillas escapadas y saltos de línea dentro de campos.
+       ========================================================= */
+    function parseCSV(csvText) {
+      const rows = [];
+      let row = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const next = csvText[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(current.trim());
+          current = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(current.trim());
+          if (row.some(cell => cell !== '')) rows.push(row);
+          row = [];
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+
+      row.push(current.trim());
+      if (row.some(cell => cell !== '')) rows.push(row);
+
+      if (!rows.length) return [];
+      const headers = rows[0].map(h => h.trim());
+      const missing = REQUIRED_COLUMNS.filter(col => !headers.includes(col));
+      if (missing.length) {
+        throw new Error(`El CSV no contiene las columnas requeridas: ${missing.join(', ')}`);
+      }
+
+      return rows.slice(1).map((cells, index) => {
+        const record = {};
+        headers.forEach((header, i) => record[header] = (cells[i] || '').trim());
+        record.id = `${normalize(record.Correo || record.Nombre)}-${index}`;
+        record.Url = record.Url || '';
+        return record;
+      }).filter(person => person.Nombre || person.Correo || person.Gerencia);
+    }
+
+    async function loadData() {
+      try {
+        showStatus('loading', 'Conectando con Google Sheets y cargando registros...');
+        const response = await fetch(CSV_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`No fue posible cargar el CSV. Estado HTTP: ${response.status}`);
+        const csvText = await response.text();
+        state.people = parseCSV(csvText);
+        state.filtered = [...state.people];
+
+        if (!state.people.length) {
+          showStatus('empty', 'El CSV se cargó correctamente, pero no contiene registros visibles.');
+        } else {
+          showStatus('', '');
+        }
+
+        els.lastUpdate.textContent = `Actualizado: ${new Date().toLocaleString('es-HN', { dateStyle: 'medium', timeStyle: 'short' })}`;
+        buildFilters();
+        applyFilters();
+      } catch (error) {
+        console.error(error);
+        showStatus('error', `Error al cargar datos: ${error.message}`);
+        els.lastUpdate.textContent = 'Error de conexión';
+      }
+    }
+
+    function uniqueSorted(values) {
+      return [...new Set(values.map(valueOrNA))].sort((a, b) => a.localeCompare(b, 'es'));
+    }
+
+    function buildOptions(select, values, firstLabel) {
+      select.innerHTML = `<option value="">${escapeHtml(firstLabel)}</option>` +
+        values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+    }
+
+    function buildFilters() {
+      buildOptions(els.gerenciaFilter, uniqueSorted(state.people.map(p => p.Gerencia)), 'Todas las gerencias');
+      buildOptions(els.grupoFilter, uniqueSorted(state.people.map(p => p.Grupo)), 'Todos los grupos');
+    }
+
+    function applyFilters() {
+      const query = normalize(els.searchInput.value);
+      const gerencia = els.gerenciaFilter.value;
+      const grupo = els.grupoFilter.value;
+
+      state.filtered = state.people.filter(person => {
+        const searchable = normalize([
+          person.Nombre,
+          person.Correo,
+          person.Puesto,
+          person.Grupo,
+          person.Gerencia
+        ].join(' '));
+        const matchesSearch = !query || searchable.includes(query);
+        const matchesGerencia = !gerencia || valueOrNA(person.Gerencia) === gerencia;
+        const matchesGrupo = !grupo || valueOrNA(person.Grupo) === grupo;
+        return matchesSearch && matchesGerencia && matchesGrupo;
+      });
+
+      if (state.people.length && !state.filtered.length) {
+        showStatus('empty', 'No se encontraron registros con los criterios seleccionados.');
+      } else if (state.people.length) {
+        showStatus('', '');
+      }
+
+      renderAll();
+    }
+
+    function groupBy(items, key) {
+      return items.reduce((acc, item) => {
+        const group = valueOrNA(item[key]);
+        if (!acc[group]) acc[group] = [];
+        acc[group].push(item);
+        return acc;
+      }, {});
+    }
+
+    function imgTag(src, className, alt) {
+      const safeSrc = src ? escapeHtml(src) : PLACEHOLDER;
+      return `<img class="${className}" src="${safeSrc}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER}'">`;
+    }
+
+    /* Construcción del panel lateral por Gerencia */
+    function renderSidebar() {
+      const groups = groupBy(state.filtered, 'Gerencia');
+      const entries = Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0], 'es'));
+      if (!entries.length) {
+        els.gerenciaList.innerHTML = '<p class="small-help">Sin gerencias para mostrar.</p>';
+        return;
+      }
+
+      els.gerenciaList.innerHTML = entries.map(([gerencia, people], i) => {
+        const shouldOpen = state.expanded.has(gerencia) || i === 0;
+        const peopleButtons = people
+          .sort((a, b) => valueOrNA(a.Nombre).localeCompare(valueOrNA(b.Nombre), 'es'))
+          .map(person => `
+            <button class="person-link ${person.id === state.selectedId ? 'active' : ''}" type="button" data-person-id="${escapeHtml(person.id)}">
+              ${imgTag(person.Url, 'avatar-xs', person.Nombre || 'Persona')}
+              <span><strong>${escapeHtml(valueOrNA(person.Nombre))}</strong><span>${escapeHtml(valueOrNA(person.Puesto))}</span></span>
+            </button>
+          `).join('');
+
+        return `
+          <details class="gerencia" ${shouldOpen ? 'open' : ''} data-gerencia="${escapeHtml(gerencia)}">
+            <summary><span class="gerencia-name">${escapeHtml(gerencia)}</span><span class="count-badge">${people.length}</span></summary>
+            <div class="person-list">${peopleButtons}</div>
+          </details>
+        `;
+      }).join('');
+
+      els.gerenciaList.querySelectorAll('details.gerencia').forEach(detail => {
+        detail.addEventListener('toggle', () => {
+          const name = detail.dataset.gerencia;
+          if (detail.open) state.expanded.add(name);
+          else state.expanded.delete(name);
+        });
+      });
+
+      els.gerenciaList.querySelectorAll('[data-person-id]').forEach(button => {
+        button.addEventListener('click', () => selectPerson(button.dataset.personId, true));
+      });
+    }
+
+    function selectPerson(personId, closeSidebar = false) {
+      state.selectedId = personId;
+      renderProfile();
+      renderSidebar();
+      renderTable();
+      if (closeSidebar) document.body.classList.remove('sidebar-open');
+      document.getElementById('profileContainer').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    /* Construcción de la ficha de persona */
+    function renderProfile() {
+      const person = state.people.find(p => p.id === state.selectedId) || state.filtered[0];
+      if (!person) {
+        els.profileContainer.className = 'no-selection';
+        els.profileContainer.textContent = 'No hay una persona seleccionada.';
+        return;
+      }
+      if (!state.selectedId) state.selectedId = person.id;
+      els.profileContainer.className = '';
+      els.profileContainer.innerHTML = `
+        <div class="profile">
+          ${imgTag(person.Url, 'profile-photo', person.Nombre || 'Foto de colaborador')}
+          <div>
+            <h2>${escapeHtml(valueOrNA(person.Nombre))}</h2>
+            <p class="profile-role">${escapeHtml(valueOrNA(person.Puesto))}</p>
+            <div class="chips">
+              <span class="chip gold">${escapeHtml(valueOrNA(person.Gerencia))}</span>
+              <span class="chip">Grupo: ${escapeHtml(valueOrNA(person.Grupo))}</span>
+              ${person.Genero ? `<span class="chip">Género: ${escapeHtml(person.Genero)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="profile-details">
+          <div class="detail"><span>Correo</span><strong>${person.Correo ? `<a href="mailto:${escapeHtml(person.Correo)}">${escapeHtml(person.Correo)}</a>` : 'No especificado'}</strong></div>
+          <div class="detail"><span>Gerencia</span><strong>${escapeHtml(valueOrNA(person.Gerencia))}</strong></div>
+          <div class="detail"><span>Puesto</span><strong>${escapeHtml(valueOrNA(person.Puesto))}</strong></div>
+          <div class="detail"><span>Grupo</span><strong>${escapeHtml(valueOrNA(person.Grupo))}</strong></div>
+        </div>
+      `;
+    }
+
+    function renderKpis() {
+      const gerencias = uniqueSorted(state.people.map(p => p.Gerencia)).filter(v => v !== 'No especificado');
+      const grupos = uniqueSorted(state.people.map(p => p.Grupo)).filter(v => v !== 'No especificado');
+      els.kpiTotal.textContent = state.people.length;
+      els.kpiGerencias.textContent = gerencias.length;
+      els.kpiGrupos.textContent = grupos.length;
+      els.kpiFiltered.textContent = state.filtered.length;
+    }
+
+    /* Construcción del gráfico de distribución por Gerencia */
+    function renderChart() {
+      const groups = groupBy(state.filtered, 'Gerencia');
+      const entries = Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es'));
+      if (!entries.length) {
+        els.chartContainer.innerHTML = '<p class="small-help">Sin datos para graficar.</p>';
+        return;
+      }
+      const max = Math.max(...entries.map(([, people]) => people.length), 1);
+      els.chartContainer.innerHTML = entries.map(([name, people]) => {
+        const pct = Math.max((people.length / max) * 100, 4);
+        return `
+          <div class="bar-row" title="${escapeHtml(name)}: ${people.length}">
+            <div class="bar-label">${escapeHtml(name)}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            <div class="bar-num">${people.length}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* Construcción de la tabla dinámica */
+    function renderTable() {
+      if (!state.filtered.length) {
+        els.tableBody.innerHTML = `<tr><td colspan="7">No hay registros disponibles para los criterios seleccionados.</td></tr>`;
+        return;
+      }
+      els.tableBody.innerHTML = state.filtered
+        .sort((a, b) => valueOrNA(a.Nombre).localeCompare(valueOrNA(b.Nombre), 'es'))
+        .map(person => `
+          <tr class="${person.id === state.selectedId ? 'selected-row' : ''}">
+            <td><div class="row-user">${imgTag(person.Url, 'avatar-xs', person.Nombre || 'Persona')}<strong>${escapeHtml(valueOrNA(person.Nombre))}</strong></div></td>
+            <td>${person.Correo ? `<a href="mailto:${escapeHtml(person.Correo)}">${escapeHtml(person.Correo)}</a>` : 'No especificado'}</td>
+            <td>${escapeHtml(valueOrNA(person.Gerencia))}</td>
+            <td>${escapeHtml(valueOrNA(person.Puesto))}</td>
+            <td>${escapeHtml(valueOrNA(person.Grupo))}</td>
+            <td>${person.Genero ? escapeHtml(person.Genero) : 'No especificado'}</td>
+            <td><button type="button" class="table-action" data-person-id="${escapeHtml(person.id)}">Ver ficha</button></td>
+          </tr>
+        `).join('');
+
+      els.tableBody.querySelectorAll('[data-person-id]').forEach(button => {
+        button.addEventListener('click', () => selectPerson(button.dataset.personId));
+      });
+    }
+
+    function renderAll() {
+      renderKpis();
+      renderSidebar();
+      renderProfile();
+      renderChart();
+      renderTable();
+    }
+
+    function resetFilters() {
+      els.searchInput.value = '';
+      els.gerenciaFilter.value = '';
+      els.grupoFilter.value = '';
+      applyFilters();
+    }
+
+    /* Eventos principales */
+    els.searchInput.addEventListener('input', applyFilters);
+    els.gerenciaFilter.addEventListener('change', applyFilters);
+    els.grupoFilter.addEventListener('change', applyFilters);
+    els.clearFilters.addEventListener('click', resetFilters);
+    els.sidebarToggle.addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
+    els.collapseAll.addEventListener('click', () => {
+      state.expanded.clear();
+      els.gerenciaList.querySelectorAll('details.gerencia').forEach(detail => detail.open = false);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') document.body.classList.remove('sidebar-open');
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
