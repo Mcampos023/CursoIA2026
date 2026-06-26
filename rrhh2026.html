@@ -104,8 +104,28 @@
       color: #1f3c88;
       text-align: center;
     }
-    canvas {
-      max-width: 100%;
+    .chart-container {
+      display: none;
+    }
+    .chart-container.active {
+      display: block;
+    }
+    .selector {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .selector button {
+      margin: 0 0.5rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #1f3c88;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .selector button:hover {
+      background: #3c5fa8;
     }
     @media(max-width: 768px) {
       main {
@@ -129,10 +149,23 @@
       <h2>Selecciona un empleado</h2>
       <p>La información aparecerá aquí</p>
     </section>
-    <!-- Dashboard -->
+    <!-- Dashboard con selector -->
     <div class="dashboard">
       <h3>Métricas de RRHH</h3>
-      <canvas id="gerenciaChart"></canvas>
+      <div class="selector">
+        <button onclick="showChart('gerencia')">Gerencia</button>
+        <button onclick="showChart('grupo')">Grupo</button>
+        <button onclick="showChart('genero')">Género</button>
+      </div>
+      <div id="gerenciaChartContainer" class="chart-container active">
+        <canvas id="gerenciaChart"></canvas>
+      </div>
+      <div id="grupoChartContainer" class="chart-container">
+        <canvas id="grupoChart"></canvas>
+      </div>
+      <div id="generoChartContainer" class="chart-container">
+        <canvas id="generoChart"></canvas>
+      </div>
     </div>
   </main>
 
@@ -143,11 +176,11 @@
     fetch(sheetUrl)
       .then(res => res.text())
       .then(data => {
-        const rows = data.split("\n").map(r => r.split(","));
-        const headers = rows[0];
+        const rows = data.split("\n").map(r => r.split(/,|;/));
+        const headers = rows[0].map(h => h.trim());
         employees = rows.slice(1).map(r => {
           let obj = {};
-          headers.forEach((h, i) => obj[h.trim()] = r[i]);
+          headers.forEach((h, i) => obj[h] = r[i]);
           return obj;
         });
         renderList(employees);
@@ -168,11 +201,13 @@
     function showDetail(emp) {
       const detail = document.getElementById("employeeDetail");
       detail.innerHTML = `
-        <img src="https://via.placeholder.com/120" alt="Foto empleado">
+        <img src="${emp["Url"] || "https://via.placeholder.com/120"}" alt="Foto empleado">
         <h2>${emp["Nombre"]}</h2>
         <p><strong>Gerencia:</strong> ${emp["Gerencia"]}</p>
         <p><strong>Puesto:</strong> ${emp["Puesto"]}</p>
         <p><strong>Correo:</strong> <a href="mailto:${emp["Correo"]}">${emp["Correo"]}</a></p>
+        <p><strong>Grupo:</strong> ${emp["Grupo"]}</p>
+        <p><strong>Género:</strong> ${emp["Genero"]}</p>
       `;
     }
 
@@ -180,21 +215,21 @@
       const term = e.target.value.toLowerCase();
       const filtered = employees.filter(emp =>
         (emp["Nombre"] || "").toLowerCase().includes(term) ||
-        (emp["Gerencia"] || "").toLowerCase().includes(term)
+        (emp["Gerencia"] || "").toLowerCase().includes(term) ||
+        (emp["Puesto"] || "").toLowerCase().includes(term)
       );
       renderList(filtered);
     });
 
     // ===== Dashboard con Chart.js =====
     function renderDashboard(data) {
+      // Gerencia
       const gerencias = {};
       data.forEach(emp => {
         const g = emp["Gerencia"] || "Sin gerencia";
         gerencias[g] = (gerencias[g] || 0) + 1;
       });
-
-      const ctx = document.getElementById("gerenciaChart").getContext("2d");
-      new Chart(ctx, {
+      new Chart(document.getElementById("gerenciaChart"), {
         type: 'bar',
         data: {
           labels: Object.keys(gerencias),
@@ -202,21 +237,3 @@
             label: 'Número de empleados',
             data: Object.values(gerencias),
             backgroundColor: '#1f3c88'
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: true }
-          },
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
-    }
-  </script>
-</body>
-</html>
-
