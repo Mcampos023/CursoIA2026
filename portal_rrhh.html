@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de RRHH</title>
+  <meta name="description" content="Portal dinámico de Recursos Humanos conectado a Google Sheets mediante fetch()." />
+
+  <!-- Librerías externas con beneficio claro: iconografía moderna y gráficos simples -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-solid: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --dark: #050505;
+      --gold: #f2d13d;
+      --gold-2: #d7ac12;
+      --brand: #2563eb;
+      --brand-2: #0ea5e9;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+      --soft-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+      --sidebar-width: 330px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(242, 209, 61, 0.16), transparent 30%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      background: var(--dark);
+      color: var(--gold);
+      padding: 20px clamp(18px, 5vw, 58px) 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .title-wrap {
+      width: min(1240px, 100%);
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: #111827;
+      background: linear-gradient(135deg, var(--gold), #fff1a6);
+      box-shadow: 0 0 0 6px rgba(242, 209, 61, 0.12);
+      font-size: 23px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 4.4rem);
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    .sync-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fef3c7;
+      font-size: 0.84rem;
+      border: 1px solid rgba(242, 209, 61, 0.28);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 10px 13px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      width: min(1320px, calc(100% - 32px));
+      margin: 22px auto 46px;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .main-card,
+    .profile-photo-card,
+    .profile-detail-card,
+    .stat-card,
+    .table-card {
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: var(--soft-shadow);
+      border-radius: var(--radius);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 112px;
+      max-height: calc(100vh - 134px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 12px;
+      font-size: 0.77rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #334155;
+    }
+
+    .tiny-meta {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .tree-search,
+    .global-search,
+    .filter-select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      border-radius: 13px;
+      transition: 0.2s ease;
+    }
+
+    .tree-search,
+    .global-search { padding: 12px 14px 12px 42px; }
+    .filter-select { padding: 12px 14px; }
+
+    .input-shell { position: relative; }
+    .input-shell i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .tree-search:focus,
+    .global-search:focus,
+    .filter-select:focus {
+      border-color: rgba(37, 99, 235, 0.62);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.11);
+    }
+
+    .tree {
+      padding: 12px 10px 18px;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #94a3b8 transparent;
+    }
+
+    .group-block + .group-block { margin-top: 7px; }
+
+    .group-button {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      background: transparent;
+      color: #334155;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .group-button:hover,
+    .group-button.active {
+      background: linear-gradient(90deg, rgba(242, 209, 61, 0.22), rgba(37, 99, 235, 0.08));
+    }
+
+    .group-button .count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .people-list {
+      margin: 2px 0 0 31px;
+      padding: 0;
+      list-style: none;
+      display: none;
+      border-left: 2px solid #e2e8f0;
+    }
+
+    .group-block.open .people-list { display: block; }
+
+    .person-item {
+      padding: 8px 10px;
+      border-radius: 11px;
+      margin: 3px 6px 3px 9px;
+      color: #475569;
+      font-size: 0.91rem;
+      cursor: pointer;
+      transition: 0.18s ease;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .person-item:hover,
+    .person-item.selected {
+      color: #111827;
+      background: #eef2ff;
+      box-shadow: inset 3px 0 0 var(--brand);
+    }
+
+    .main { min-width: 0; }
+
+    .main-card { padding: 20px; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(170px, 230px) minmax(170px, 230px) auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 13px;
+      padding: 12px 15px;
+      font-weight: 800;
+      color: #111827;
+      background: linear-gradient(135deg, var(--gold), #fff2a8);
+      box-shadow: 0 12px 26px rgba(215, 172, 18, 0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(215, 172, 18, 0.3); }
+    .btn.secondary { background: #fff; color: #334155; border: 1px solid #dbe3ef; box-shadow: none; }
+
+    .status-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--warning);
+      display: inline-block;
+      box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.13);
+    }
+
+    .status-dot.ok { background: var(--success); box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.13); }
+    .status-dot.error { background: #dc2626; box-shadow: 0 0 0 5px rgba(220, 38, 38, 0.12); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .stat-card {
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.08);
+      right: -50px;
+      top: -55px;
+    }
+
+    .stat-card .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: var(--brand);
+      margin-bottom: 12px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 1.7rem;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-card span { color: var(--muted); font-size: 0.86rem; }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 340px) 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .profile-photo-card {
+      padding: 16px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .photo-wrap {
+      flex: 1;
+      min-height: 285px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .photo-wrap:hover img { transform: scale(1.035); }
+
+    .photo-placeholder {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #94a3b8;
+      font-size: 3.2rem;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .profile-summary h2 { margin: 0 0 4px; font-size: 1.2rem; }
+    .profile-summary p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+    .profile-detail-card {
+      padding: clamp(22px, 4vw, 34px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-detail-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 7px;
+      background: linear-gradient(180deg, var(--gold), var(--brand-2));
+    }
+
+    .detail-line {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px dashed #dbe3ef;
+      align-items: start;
+    }
+
+    .detail-line:last-child { border-bottom: 0; }
+
+    .detail-label {
+      font-size: clamp(1.25rem, 2.7vw, 2rem);
+      color: #262626;
+      line-height: 1.1;
+      text-transform: none;
+    }
+
+    .detail-value {
+      align-self: center;
+      color: #334155;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .detail-value a {
+      color: #0f5f8f;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .chart-table-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: minmax(260px, 0.45fr) minmax(0, 0.55fr);
+      gap: 18px;
+    }
+
+    .table-card { padding: 18px; overflow: hidden; }
+    .table-card h3 { margin: 0 0 12px; }
+
+    .chart-box {
+      height: 290px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .table-scroll { overflow: auto; max-height: 330px; border-radius: 15px; border: 1px solid var(--line); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      min-width: 620px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.9rem;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    tr { cursor: pointer; transition: background 0.15s ease; }
+    tbody tr:hover { background: #f8fbff; }
+    tbody tr.active-row { background: #eef2ff; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      color: #475569;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #eef2f7, #f8fafc, #eef2f7);
+      background-size: 200% 100%;
+      animation: loading 1.2s infinite;
+    }
+
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeUp 0.35s ease both; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; top: auto; max-height: 440px; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-table-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar { padding: 16px; }
+      .title-wrap { grid-template-columns: 40px 1fr; }
+      .brand-badge { width: 40px; height: 40px; border-radius: 12px; font-size: 19px; }
+      .sync-pill { grid-column: 1 / -1; justify-content: center; }
+      .layout { width: min(100% - 20px, 1320px); margin-top: 14px; gap: 14px; }
+      .main-card { padding: 15px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .profile-photo-card, .profile-detail-card { min-height: auto; }
+      .photo-wrap { min-height: 280px; }
+      .detail-line { grid-template-columns: 1fr; gap: 5px; }
+      .detail-label { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-wrap">
+      <div class="brand-badge" aria-hidden="true"><i class="fa-solid fa-users-gear"></i></div>
+      <h1>Portal de RRHH</h1>
+      <div class="sync-pill" title="La información se carga desde Google Sheets al recargar la página.">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span>Datos en vivo desde Google Sheets</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Listado por gerencia">
+      <div class="sidebar-head">
+        <p class="section-label"><i class="fa-solid fa-sitemap"></i> Gerencia</p>
+        <div class="input-shell">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="treeSearch" class="tree-search" type="search" placeholder="Filtrar árbol..." autocomplete="off" />
+        </div>
+        <p id="sidebarMeta" class="tiny-meta">Cargando estructura...</p>
+      </div>
+      <div id="tree" class="tree">
+        <div class="empty-state skeleton" style="height:180px;"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="main-card" aria-label="Buscador y filtros">
+        <div class="toolbar">
+          <div class="field">
+            <label for="globalSearch">Nombre</label>
+            <div class="input-shell">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="globalSearch" class="global-search" type="search" placeholder="Buscar por nombre, correo, puesto o gerencia..." autocomplete="off" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="gerenciaFilter">Gerencia</label>
+            <select id="gerenciaFilter" class="filter-select">
+              <option value="">Todas las gerencias</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="grupoFilter">Grupo</label>
+            <select id="grupoFilter" class="filter-select">
+              <option value="">Todos los grupos</option>
+            </select>
+          </div>
+          <button id="clearBtn" class="btn secondary" type="button"><i class="fa-solid fa-broom"></i> Limpiar</button>
+        </div>
+        <div class="status-row">
+          <span id="statusDot" class="status-dot"></span>
+          <span id="statusText">Conectando con la hoja pública...</span>
+          <span id="lastUpdate"></span>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="Indicadores principales">
+        <article class="stat-card animate-in">
+          <div class="icon"><i class="fa-solid fa-id-card"></i></div>
+          <strong id="totalPeople">0</strong>
+          <span>colaboradores registrados</span>
+        </article>
+        <article class="stat-card animate-in">
+          <div class="icon"><i class="fa-solid fa-building-user"></i></div>
+          <strong id="totalGerencias">0</strong>
+          <span>gerencias identificadas</span>
+        </article>
+        <article class="stat-card animate-in">
+          <div class="icon"><i class="fa-solid fa-layer-group"></i></div>
+          <strong id="totalGrupos">0</strong>
+          <span>grupos encontrados</span>
+        </article>
+        <article class="stat-card animate-in">
+          <div class="icon"><i class="fa-solid fa-image"></i></div>
+          <strong id="withPhoto">0</strong>
+          <span>registros con imagen</span>
+        </article>
+      </section>
+
+      <section class="profile-grid" aria-label="Ficha del colaborador seleccionado">
+        <article class="profile-photo-card animate-in">
+          <div id="photoWrap" class="photo-wrap">
+            <div class="photo-placeholder"><i class="fa-regular fa-user"></i></div>
+          </div>
+          <div class="profile-summary">
+            <h2 id="summaryName">Seleccione una persona</h2>
+            <p id="summaryRole">Use el buscador, filtros o árbol lateral.</p>
+          </div>
+        </article>
+
+        <article class="profile-detail-card animate-in">
+          <div class="detail-line">
+            <div class="detail-label">Nombre:</div>
+            <div id="detailName" class="detail-value">—</div>
+          </div>
+          <div class="detail-line">
+            <div class="detail-label">Gerencia:</div>
+            <div id="detailGerencia" class="detail-value">—</div>
+          </div>
+          <div class="detail-line">
+            <div class="detail-label">Puesto:</div>
+            <div id="detailPuesto" class="detail-value">—</div>
+          </div>
+          <div class="detail-line">
+            <div class="detail-label">Correo:</div>
+            <div id="detailCorreo" class="detail-value">—</div>
+          </div>
+          <div class="detail-line">
+            <div class="detail-label">Grupo:</div>
+            <div id="detailGrupo" class="detail-value">—</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="chart-table-grid" aria-label="Gráficos y tabla">
+        <article class="table-card animate-in">
+          <h3><i class="fa-solid fa-chart-pie"></i> Distribución por gerencia</h3>
+          <div class="chart-box"><canvas id="gerenciaChart" aria-label="Gráfico de distribución por gerencia"></canvas></div>
+        </article>
+        <article class="table-card animate-in">
+          <h3><i class="fa-solid fa-table-list"></i> Directorio dinámico</h3>
+          <div id="tableContainer" class="table-scroll"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /**********************************************************************
+     * CONFIGURACIÓN PRINCIPAL
+     * Aquí se define la conexión pública con Google Sheets.
+     * Si cambia la hoja, sustituya únicamente esta constante por la nueva URL.
+     **********************************************************************/
+    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-2kRZP0cXJV92YzCUw0Mkjkl-_l8Y7OM2VHkl7Wxr3qorbtGkk0O1InjMMMWzkPRorZUiJum7rL-4/pub?gid=0&single=true&output=csv";
+
+    /**********************************************************************
+     * ESTADO GLOBAL DE LA APLICACIÓN
+     * allPeople: datos originales procesados desde Google Sheets.
+     * filteredPeople: datos filtrados por buscador y selectores.
+     * selectedPerson: persona actualmente visible en la ficha.
+     **********************************************************************/
+    const state = {
+      allPeople: [],
+      filteredPeople: [],
+      selectedPerson: null,
+      chart: null,
+      activeGerencia: ""
+    };
+
+    const els = {
+      statusDot: document.getElementById("statusDot"),
+      statusText: document.getElementById("statusText"),
+      lastUpdate: document.getElementById("lastUpdate"),
+      tree: document.getElementById("tree"),
+      sidebarMeta: document.getElementById("sidebarMeta"),
+      treeSearch: document.getElementById("treeSearch"),
+      globalSearch: document.getElementById("globalSearch"),
+      gerenciaFilter: document.getElementById("gerenciaFilter"),
+      grupoFilter: document.getElementById("grupoFilter"),
+      clearBtn: document.getElementById("clearBtn"),
+      totalPeople: document.getElementById("totalPeople"),
+      totalGerencias: document.getElementById("totalGerencias"),
+      totalGrupos: document.getElementById("totalGrupos"),
+      withPhoto: document.getElementById("withPhoto"),
+      photoWrap: document.getElementById("photoWrap"),
+      summaryName: document.getElementById("summaryName"),
+      summaryRole: document.getElementById("summaryRole"),
+      detailName: document.getElementById("detailName"),
+      detailGerencia: document.getElementById("detailGerencia"),
+      detailPuesto: document.getElementById("detailPuesto"),
+      detailCorreo: document.getElementById("detailCorreo"),
+      detailGrupo: document.getElementById("detailGrupo"),
+      tableContainer: document.getElementById("tableContainer")
+    };
+
+    /**********************************************************************
+     * UTILIDADES DE TEXTO Y CSV
+     * parseCSV() procesa correctamente comillas, saltos de línea y comas
+     * dentro de campos, sin depender de frameworks.
+     **********************************************************************/
+    function normalize(text) {
+      return String(text ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function cleanHeader(header) {
+      return normalize(header).replace(/\s+/g, "");
+    }
+
+    function parseCSV(csvText) {
+      const rows = [];
+      let row = [];
+      let current = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const next = csvText[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          row.push(current.trim());
+          current = "";
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(current.trim());
+          if (row.some(cell => cell !== "")) rows.push(row);
+          row = [];
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      if (current || row.length) {
+        row.push(current.trim());
+        if (row.some(cell => cell !== "")) rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function mapRowsToPeople(rows) {
+      const headers = rows[0].map(cleanHeader);
+      const getIndex = (...aliases) => aliases.map(cleanHeader).map(a => headers.indexOf(a)).find(i => i >= 0);
+
+      const idx = {
+        nombre: getIndex("Nombre"),
+        correo: getIndex("Correo", "Email"),
+        grupo: getIndex("Grupo"),
+        genero: getIndex("Genero", "Género"),
+        gerencia: getIndex("Gerencia"),
+        puesto: getIndex("Puesto", "Cargo"),
+        url: getIndex("Url", "URL", "Imagen", "Foto")
+      };
+
+      return rows.slice(1).map((row, index) => ({
+        id: `persona-${index}`,
+        nombre: row[idx.nombre] || "Sin nombre",
+        correo: row[idx.correo] || "",
+        grupo: row[idx.grupo] || "Sin grupo",
+        genero: row[idx.genero] || "",
+        gerencia: row[idx.gerencia] || "Sin gerencia",
+        puesto: row[idx.puesto] || "Sin puesto",
+        url: row[idx.url] || ""
+      })).filter(person => normalize(person.nombre) !== "sin nombre");
+    }
+
+    function uniqueSorted(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
+    }
+
+    function setStatus(type, message) {
+      els.statusDot.className = `status-dot ${type === "ok" ? "ok" : type === "error" ? "error" : ""}`;
+      els.statusText.textContent = message;
+    }
+
+    /**********************************************************************
+     * CARGA DE DATOS CON fetch()
+     * Esta función obtiene los datos en vivo desde Google Sheets. Se añade
+     * un parámetro anti-caché para favorecer que se cargue la versión reciente
+     * al recargar el sitio publicado.
+     **********************************************************************/
+    async function loadSheetData() {
+      try {
+        setStatus("loading", "Conectando con la hoja pública...");
+        const response = await fetch(`${GOOGLE_SHEET_CSV_URL}&cacheBust=${Date.now()}`);
+        if (!response.ok) throw new Error(`No se pudo cargar la hoja. Estado HTTP: ${response.status}`);
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+        if (!rows.length) throw new Error("La hoja no contiene registros legibles.");
+
+        state.allPeople = mapRowsToPeople(rows);
+        state.filteredPeople = [...state.allPeople];
+
+        buildFilters();
+        applyFilters();
+        selectPerson(state.filteredPeople[0] || null);
+
+        const now = new Date();
+        setStatus("ok", "Datos cargados correctamente desde Google Sheets.");
+        els.lastUpdate.textContent = `Última carga: ${now.toLocaleString("es-HN", { dateStyle: "medium", timeStyle: "short" })}`;
+      } catch (error) {
+        console.error(error);
+        setStatus("error", "No fue posible cargar los datos. Verifique que la hoja esté publicada como CSV y que sea accesible públicamente.");
+        els.tree.innerHTML = `<div class="empty-state"><strong>Error de carga</strong><br>${error.message}</div>`;
+        els.tableContainer.innerHTML = `<div class="empty-state">No hay datos disponibles para mostrar.</div>`;
+      }
+    }
+
+    /**********************************************************************
+     * CONSTRUCCIÓN DINÁMICA DE FILTROS, ÁRBOL, TARJETAS, TABLA Y GRÁFICO
+     **********************************************************************/
+    function buildFilters() {
+      const gerencias = uniqueSorted(state.allPeople.map(p => p.gerencia));
+      const grupos = uniqueSorted(state.allPeople.map(p => p.grupo));
+
+      els.gerenciaFilter.innerHTML = `<option value="">Todas las gerencias</option>` + gerencias.map(g => `<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join("");
+      els.grupoFilter.innerHTML = `<option value="">Todos los grupos</option>` + grupos.map(g => `<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join("");
+    }
+
+    function applyFilters() {
+      const q = normalize(els.globalSearch.value);
+      const treeQ = normalize(els.treeSearch.value);
+      const gerencia = els.gerenciaFilter.value;
+      const grupo = els.grupoFilter.value;
+
+      state.filteredPeople = state.allPeople.filter(person => {
+        const searchable = normalize(`${person.nombre} ${person.correo} ${person.puesto} ${person.gerencia} ${person.grupo}`);
+        const matchesGlobal = !q || searchable.includes(q);
+        const matchesTree = !treeQ || searchable.includes(treeQ);
+        const matchesGerencia = !gerencia || person.gerencia === gerencia;
+        const matchesGrupo = !grupo || person.grupo === grupo;
+        return matchesGlobal && matchesTree && matchesGerencia && matchesGrupo;
+      });
+
+      renderStats();
+      renderTree();
+      renderTable();
+      renderChart();
+
+      if (!state.filteredPeople.some(p => state.selectedPerson && p.id === state.selectedPerson.id)) {
+        selectPerson(state.filteredPeople[0] || null);
+      } else {
+        highlightSelected();
+      }
+    }
+
+    function renderStats() {
+      const visible = state.filteredPeople;
+      els.totalPeople.textContent = visible.length;
+      els.totalGerencias.textContent = uniqueSorted(visible.map(p => p.gerencia)).length;
+      els.totalGrupos.textContent = uniqueSorted(visible.map(p => p.grupo)).length;
+      els.withPhoto.textContent = visible.filter(p => p.url).length;
+      els.sidebarMeta.textContent = `${visible.length} registro(s) visible(s) de ${state.allPeople.length} total(es).`;
+    }
+
+    function groupByGerencia(people) {
+      return people.reduce((acc, person) => {
+        const key = person.gerencia || "Sin gerencia";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(person);
+        return acc;
+      }, {});
+    }
+
+    function renderTree() {
+      if (!state.filteredPeople.length) {
+        els.tree.innerHTML = `<div class="empty-state">No se encontraron colaboradores con los filtros actuales.</div>`;
+        return;
+      }
+
+      const grouped = groupByGerencia(state.filteredPeople);
+      const gerencias = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "es"));
+
+      els.tree.innerHTML = gerencias.map((gerencia, index) => {
+        const people = grouped[gerencia].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        const isOpen = state.activeGerencia ? state.activeGerencia === gerencia : index === 0;
+        return `
+          <div class="group-block ${isOpen ? "open" : ""}" data-gerencia="${escapeHTML(gerencia)}">
+            <button class="group-button ${isOpen ? "active" : ""}" type="button" data-action="toggle" data-gerencia="${escapeHTML(gerencia)}">
+              <i class="fa-regular ${isOpen ? "fa-square-minus" : "fa-square-plus"}"></i>
+              <span>${escapeHTML(gerencia)}</span>
+              <span class="count">${people.length}</span>
+            </button>
+            <ul class="people-list">
+              ${people.map(person => `<li class="person-item" data-person-id="${person.id}"><span>${escapeHTML(person.nombre)}</span><i class="fa-solid fa-chevron-right"></i></li>`).join("")}
+            </ul>
+          </div>`;
+      }).join("");
+
+      els.tree.querySelectorAll("[data-action='toggle']").forEach(button => {
+        button.addEventListener("click", () => {
+          const gerencia = button.dataset.gerencia;
+          state.activeGerencia = state.activeGerencia === gerencia ? "" : gerencia;
+          renderTree();
+          highlightSelected();
+        });
+      });
+
+      els.tree.querySelectorAll(".person-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const person = state.allPeople.find(p => p.id === item.dataset.personId);
+          selectPerson(person);
+        });
+      });
+
+      highlightSelected();
+    }
+
+    function renderTable() {
+      if (!state.filteredPeople.length) {
+        els.tableContainer.innerHTML = `<div class="empty-state">No hay registros para la tabla.</div>`;
+        return;
+      }
+
+      els.tableContainer.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Gerencia</th>
+              <th>Puesto</th>
+              <th>Grupo</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.filteredPeople.map(person => `
+              <tr data-person-id="${person.id}">
+                <td><strong>${escapeHTML(person.nombre)}</strong></td>
+                <td>${person.correo ? `<a href="mailto:${escapeHTML(person.correo)}">${escapeHTML(person.correo)}</a>` : "—"}</td>
+                <td><span class="badge"><i class="fa-solid fa-building"></i>${escapeHTML(person.gerencia)}</span></td>
+                <td>${escapeHTML(person.puesto)}</td>
+                <td>${escapeHTML(person.grupo)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+
+      els.tableContainer.querySelectorAll("tbody tr").forEach(row => {
+        row.addEventListener("click", () => {
+          const person = state.allPeople.find(p => p.id === row.dataset.personId);
+          selectPerson(person);
+        });
+      });
+
+      highlightSelected();
+    }
+
+    function renderChart() {
+      const canvas = document.getElementById("gerenciaChart");
+      const grouped = groupByGerencia(state.filteredPeople);
+      const labels = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "es"));
+      const data = labels.map(label => grouped[label].length);
+
+      if (state.chart) state.chart.destroy();
+
+      state.chart = new Chart(canvas, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: ["#2563eb", "#0ea5e9", "#f2d13d", "#16a34a", "#f97316", "#8b5cf6", "#ef4444", "#14b8a6", "#64748b", "#d946ef"],
+            borderWidth: 3,
+            borderColor: "#ffffff"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom", labels: { boxWidth: 12, usePointStyle: true } },
+            tooltip: { callbacks: { label: item => `${item.label}: ${item.raw} registro(s)` } }
+          },
+          cutout: "62%"
+        }
+      });
+    }
+
+    function selectPerson(person) {
+      state.selectedPerson = person;
+
+      if (!person) {
+        els.photoWrap.innerHTML = `<div class="photo-placeholder"><i class="fa-regular fa-user"></i></div>`;
+        els.summaryName.textContent = "Sin selección";
+        els.summaryRole.textContent = "No hay registros disponibles.";
+        els.detailName.textContent = "—";
+        els.detailGerencia.textContent = "—";
+        els.detailPuesto.textContent = "—";
+        els.detailCorreo.textContent = "—";
+        els.detailGrupo.textContent = "—";
+        highlightSelected();
+        return;
+      }
+
+      els.summaryName.textContent = person.nombre;
+      els.summaryRole.textContent = `${person.puesto || "Sin puesto"} · ${person.gerencia || "Sin gerencia"}`;
+      els.detailName.innerHTML = escapeHTML(person.nombre);
+      els.detailGerencia.innerHTML = escapeHTML(person.gerencia || "—");
+      els.detailPuesto.innerHTML = escapeHTML(person.puesto || "—");
+      els.detailCorreo.innerHTML = person.correo ? `<a href="mailto:${escapeHTML(person.correo)}">${escapeHTML(person.correo)}</a>` : "—";
+      els.detailGrupo.innerHTML = escapeHTML(person.grupo || "—");
+
+      if (person.url) {
+        els.photoWrap.innerHTML = `<img src="${escapeHTML(person.url)}" alt="Fotografía de ${escapeHTML(person.nombre)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;photo-placeholder&quot;><i class=&quot;fa-regular fa-user&quot;></i></div>'" />`;
+      } else {
+        els.photoWrap.innerHTML = `<div class="photo-placeholder"><i class="fa-regular fa-user"></i></div>`;
+      }
+
+      highlightSelected();
+    }
+
+    function highlightSelected() {
+      document.querySelectorAll(".person-item, tbody tr").forEach(el => {
+        const selected = state.selectedPerson && el.dataset.personId === state.selectedPerson.id;
+        el.classList.toggle("selected", selected);
+        el.classList.toggle("active-row", selected);
+      });
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /**********************************************************************
+     * EVENTOS DE INTERACCIÓN
+     * Se conectan buscadores, filtros y acciones del usuario.
+     **********************************************************************/
+    els.globalSearch.addEventListener("input", applyFilters);
+    els.treeSearch.addEventListener("input", applyFilters);
+    els.gerenciaFilter.addEventListener("change", () => {
+      state.activeGerencia = els.gerenciaFilter.value;
+      applyFilters();
+    });
+    els.grupoFilter.addEventListener("change", applyFilters);
+    els.clearBtn.addEventListener("click", () => {
+      els.globalSearch.value = "";
+      els.treeSearch.value = "";
+      els.gerenciaFilter.value = "";
+      els.grupoFilter.value = "";
+      state.activeGerencia = "";
+      applyFilters();
+    });
+
+    // Inicializa la aplicación al cargar la página.
+    loadSheetData();
+  </script>
+</body>
+</html>
