@@ -176,16 +176,18 @@
     fetch(sheetUrl)
       .then(res => res.text())
       .then(data => {
-        const rows = data.split("\n").map(r => r.split(/,|;/));
+        // dividir por líneas, filtrar vacías y aceptar , o ;
+        const rows = data.split("\n").filter(r => r.trim() !== "").map(r => r.split(/,|;/));
         const headers = rows[0].map(h => h.trim());
         employees = rows.slice(1).map(r => {
           let obj = {};
-          headers.forEach((h, i) => obj[h] = r[i]);
+          headers.forEach((h, i) => obj[h] = r[i] || "");
           return obj;
         });
         renderList(employees);
         renderDashboard(employees);
-      });
+      })
+      .catch(err => console.error("Error al cargar CSV:", err));
 
     function renderList(data) {
       const list = document.getElementById("employeeList");
@@ -222,6 +224,8 @@
     });
 
     // ===== Dashboard con Chart.js =====
+    let charts = {};
+
     function renderDashboard(data) {
       // Gerencia
       const gerencias = {};
@@ -229,11 +233,4 @@
         const g = emp["Gerencia"] || "Sin gerencia";
         gerencias[g] = (gerencias[g] || 0) + 1;
       });
-      new Chart(document.getElementById("gerenciaChart"), {
-        type: 'bar',
-        data: {
-          labels: Object.keys(gerencias),
-          datasets: [{
-            label: 'Número de empleados',
-            data: Object.values(gerencias),
-            backgroundColor: '#1f3c88'
+      charts.gerencia = new Chart(document.getElementById("gerenciaChart"),
