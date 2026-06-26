@@ -7,144 +7,63 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 🔹 Bloque CSS completo dentro del <head> -->
   <style>
-    /* estilos omitidos por brevedad, iguales a los anteriores */
-    .chart-container { display: none; }
-    .chart-container.active { display: block; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+    header {
+      background: #1f3c88;
+      color: #fff;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    aside {
+      flex: 1 1 250px;
+      max-width: 300px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1rem;
+      height: fit-content;
+    }
+    aside input {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+    aside ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    aside li {
+      padding: 0.6rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+    aside li:hover {
+      background: #e9eef7;
+    }
   </style>
 </head>
 <body>
-  <header><i class="fa-solid fa-users"></i> Portal de RRHH</header>
-  <main>
-    <aside>
-      <input type="text" id="search" placeholder="Buscar empleado...">
-      <ul id="employeeList"></ul>
-    </aside>
-    <section id="employeeDetail">
-      <img src="https://via.placeholder.com/120" alt="Foto empleado">
-      <h2>Selecciona un empleado</h2>
-      <p>La información aparecerá aquí</p>
-    </section>
-    <div class="dashboard">
-      <h3>Métricas de RRHH</h3>
-      <div class="selector">
-        <button onclick="showChart('gerencia')">Gerencia</button>
-        <button onclick="showChart('grupo')">Grupo</button>
-        <button onclick="showChart('genero')">Género</button>
-      </div>
-      <div id="gerenciaChartContainer" class="chart-container active">
-        <canvas id="gerenciaChart"></canvas>
-      </div>
-      <div id="grupoChartContainer" class="chart-container">
-        <canvas id="grupoChart"></canvas>
-      </div>
-      <div id="generoChartContainer" class="chart-container">
-        <canvas id="generoChart"></canvas>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-2kRZP0cXJV92YzCUw0Mkjkl-_l8Y7OM2VHkl7Wxr3qorbtGkk0O1InjMMMWzkPRorZUiJum7rL-4/pub?gid=0&single=true&output=csv";
-    let employees = [];
-
-    fetch(sheetUrl)
-      .then(res => res.text())
-      .then(data => {
-        const rows = data.split("\n").filter(r => r.trim() !== "").map(r => r.split(/,|;/));
-        const headers = rows[0].map(h => h.trim());
-        employees = rows.slice(1).map(r => {
-          let obj = {};
-          headers.forEach((h, i) => obj[h] = r[i] || "");
-          return obj;
-        });
-        renderList(employees);
-        renderDashboard(employees);
-      })
-      .catch(err => console.error("Error al cargar CSV:", err));
-
-    function renderList(data) {
-      const list = document.getElementById("employeeList");
-      list.innerHTML = "";
-      data.forEach(emp => {
-        const li = document.createElement("li");
-        li.textContent = emp["Nombre"] || "Sin nombre";
-        li.addEventListener("click", () => showDetail(emp));
-        list.appendChild(li);
-      });
-    }
-
-    function showDetail(emp) {
-      const detail = document.getElementById("employeeDetail");
-      detail.innerHTML = `
-        <img src="${emp["Url"] || "https://via.placeholder.com/120"}" alt="Foto empleado">
-        <h2>${emp["Nombre"]}</h2>
-        <p><strong>Gerencia:</strong> ${emp["Gerencia"]}</p>
-        <p><strong>Puesto:</strong> ${emp["Puesto"]}</p>
-        <p><strong>Correo:</strong> <a href="mailto:${emp["Correo"]}">${emp["Correo"]}</a></p>
-        <p><strong>Grupo:</strong> ${emp["Grupo"]}</p>
-        <p><strong>Género:</strong> ${emp["Genero"]}</p>
-      `;
-    }
-
-    document.getElementById("search").addEventListener("input", e => {
-      const term = e.target.value.toLowerCase();
-      const filtered = employees.filter(emp =>
-        (emp["Nombre"] || "").toLowerCase().includes(term) ||
-        (emp["Gerencia"] || "").toLowerCase().includes(term) ||
-        (emp["Puesto"] || "").toLowerCase().includes(term)
-      );
-      renderList(filtered);
-    });
-
-    // Dashboard con Chart.js
-    let charts = {};
-
-    function renderDashboard(data) {
-      // Gerencia
-      const gerencias = {};
-      data.forEach(emp => {
-        const g = emp["Gerencia"] || "Sin gerencia";
-        gerencias[g] = (gerencias[g] || 0) + 1;
-      });
-      charts.gerencia = new Chart(document.getElementById("gerenciaChart"), {
-        type: 'bar',
-        data: { labels: Object.keys(gerencias), datasets: [{ data: Object.values(gerencias), backgroundColor: '#1f3c88' }] },
-        options: { responsive: true, plugins: { legend: { display: false } } }
-      });
-
-      // Grupo
-      const grupos = {};
-      data.forEach(emp => {
-        const g = emp["Grupo"] || "Sin grupo";
-        grupos[g] = (grupos[g] || 0) + 1;
-      });
-      charts.grupo = new Chart(document.getElementById("grupoChart"), {
-        type: 'pie',
-        data: { labels: Object.keys(grupos), datasets: [{ data: Object.values(grupos), backgroundColor: ['#1f3c88','#3c88af','#88c0d0','#f4a261','#e76f51','#2a9d8f'] }] },
-        options: { responsive: true }
-      });
-
-      // Género
-      const generos = {};
-      data.forEach(emp => {
-        const g = emp["Genero"] || "Sin género";
-        generos[g] = (generos[g] || 0) + 1;
-      });
-      charts.genero = new Chart(document.getElementById("generoChart"), {
-        type: 'pie',
-        data: { labels: Object.keys(generos), datasets: [{ data: Object.values(generos), backgroundColor: ['#1f3c88','#f4a261','#2a9d8f','#e76f51'] }] },
-        options: { responsive: true }
-      });
-    }
-
-    // Función para alternar gráficos
-    function showChart(type) {
-      document.querySelectorAll('.chart-container').forEach(c => c.classList.remove('active'));
-      if (type === 'gerencia') document.getElementById('gerenciaChartContainer').classList.add('active');
-      if (type === 'grupo') document.getElementById('grupoChartContainer').classList.add('active');
-      if (type === 'genero') document.getElementById('generoChartContainer').classList.add('active');
-    }
-  </script>
+  <!-- contenido -->
 </body>
 </html>
