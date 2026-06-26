@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Odisea de la IA: El Reino del Algoritmo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+        .glow-blue {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .glow-green {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        .glow-purple {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+        /* Animaciones personalizadas */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER / STATUS BAR -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg animate-pulse">
+                    <i class="fas fa-gamepad text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">LA ODISEA DE LA IA</h1>
+                    <p class="text-xs text-slate-400 font-semibold flex items-center gap-1">
+                        <i class="fas fa-file-word text-blue-400"></i> Lore de: Inteligencia Artificial puma.docx
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Player Stats HUD -->
+            <div class="flex items-center gap-6 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider">Héroe:</span>
+                    <span class="text-sm font-bold text-white flex items-center gap-1">
+                        <i class="fas fa-user-astronaut text-purple-400"></i> Puma Explorer
+                    </span>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-800"></div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-crown text-yellow-400 animate-bounce"></i>
+                    <span class="text-xs text-yellow-400 font-bold">NIVEL <span id="player-level">1</span></span>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-800"></div>
+                <div class="flex flex-col">
+                    <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                        <span>XP</span>
+                        <span id="xp-text">0 / 500</span>
+                    </div>
+                    <div class="w-28 md:w-40 bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="xp-progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-800"></div>
+                <!-- Mute button -->
+                <button onclick="toggleSound()" class="text-slate-400 hover:text-white transition" title="Activar/Desactivar sonido">
+                    <i id="sound-icon" class="fas fa-volume-mute text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- LEFT SIDE: Interactive Map Grid (Visual Navigation) -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col h-full shadow-xl">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fas fa-map-marked-alt text-indigo-400 text-lg"></i>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Mapa del Reino de la IA</h2>
+                </div>
+                
+                <p class="text-xs text-slate-400 mb-4">
+                    Haz clic en cualquiera de las 5 regiones del reino para iniciar tu entrenamiento y vencer los desafíos conceptuales.
+                </p>
+
+                <!-- MAP VISUALIZATION -->
+                <div class="grid grid-cols-1 gap-3 flex-grow overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+                    
+                    <!-- Region 1 Card -->
+                    <button id="btn-zone-1" onclick="selectZone(1)" class="w-full text-left p-4 rounded-xl border border-blue-900/40 bg-gradient-to-r from-slate-950 to-blue-950/20 hover:border-blue-500 hover:scale-[1.02] transition-all flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 w-1 bg-blue-500"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-950 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">Zona 1</span>
+                                <h3 class="text-sm font-bold text-slate-100">Valle de la Ontología</h3>
+                            </div>
+                        </div>
+                        <span id="badge-zone-1" class="text-xs px-2 py-1 bg-blue-950 text-blue-400 border border-blue-900/60 rounded-md font-bold">Activo</span>
+                    </button>
+
+                    <!-- Region 2 Card -->
+                    <button id="btn-zone-2" onclick="selectZone(2)" class="w-full text-left p-4 rounded-xl border border-purple-900/40 bg-gradient-to-r from-slate-950 to-purple-950/20 hover:border-purple-500 hover:scale-[1.02] transition-all flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 w-1 bg-purple-500"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-950 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition">
+                                <i class="fas fa-terminal"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-purple-400 font-bold uppercase tracking-wider block">Zona 2</span>
+                                <h3 class="text-sm font-bold text-slate-100">Laberinto de los Prompts</h3>
+                            </div>
+                        </div>
+                        <span id="badge-zone-2" class="text-xs px-2 py-1 bg-slate-900 text-slate-500 border border-slate-800 rounded-md font-bold">Bloqueado</span>
+                    </button>
+
+                    <!-- Region 3 Card -->
+                    <button id="btn-zone-3" onclick="selectZone(3)" class="w-full text-left p-4 rounded-xl border border-emerald-900/40 bg-gradient-to-r from-slate-950 to-emerald-950/20 hover:border-emerald-500 hover:scale-[1.02] transition-all flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 w-1 bg-emerald-500"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-950 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">Zona 3</span>
+                                <h3 class="text-sm font-bold text-slate-100">Ciudad de las Plataformas</h3>
+                            </div>
+                        </div>
+                        <span id="badge-zone-3" class="text-xs px-2 py-1 bg-slate-900 text-slate-500 border border-slate-800 rounded-md font-bold">Bloqueado</span>
+                    </button>
+
+                    <!-- Region 4 Card -->
+                    <button id="btn-zone-4" onclick="selectZone(4)" class="w-full text-left p-4 rounded-xl border border-yellow-900/40 bg-gradient-to-r from-slate-950 to-yellow-950/20 hover:border-yellow-500 hover:scale-[1.02] transition-all flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 w-1 bg-yellow-500"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-950 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500 group-hover:text-white transition">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-wider block">Zona 4</span>
+                                <h3 class="text-sm font-bold text-slate-100">Templo de la Ofimática</h3>
+                            </div>
+                        </div>
+                        <span id="badge-zone-4" class="text-xs px-2 py-1 bg-slate-900 text-slate-500 border border-slate-800 rounded-md font-bold">Bloqueado</span>
+                    </button>
+
+                    <!-- Region 5 Card -->
+                    <button id="btn-zone-5" onclick="selectZone(5)" class="w-full text-left p-4 rounded-xl border border-rose-900/40 bg-gradient-to-r from-slate-950 to-rose-950/20 hover:border-rose-500 hover:scale-[1.02] transition-all flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 w-1 bg-rose-500"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-rose-950 flex items-center justify-center text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition">
+                                <i class="fas fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-rose-400 font-bold uppercase tracking-wider block">Zona 5</span>
+                                <h3 class="text-sm font-bold text-slate-100">Torre de la Gobernanza</h3>
+                            </div>
+                        </div>
+                        <span id="badge-zone-5" class="text-xs px-2 py-1 bg-slate-900 text-slate-500 border border-slate-800 rounded-md font-bold">Bloqueado</span>
+                    </button>
+
+                </div>
+
+                <!-- Lore Alert Dialog (Non-intrusive notification) -->
+                <div class="mt-4 p-3 bg-indigo-950/30 border border-indigo-900/50 rounded-xl flex items-start gap-2">
+                    <i class="fas fa-info-circle text-indigo-400 mt-0.5"></i>
+                    <p class="text-[11px] text-indigo-200">
+                        <strong>Consejo de Puma:</strong> Completa los desafíos de cada zona para ganar XP y desbloquear el siguiente reino de conocimiento.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: Gameplay Area (Interactive Quest and Lore) -->
+        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+            
+            <!-- QUEST DISPLAY PANEL -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl flex flex-col flex-grow min-h-[500px] shadow-xl relative overflow-hidden">
+                
+                <!-- Zone Background Decors (will change with JS) -->
+                <div id="zone-theme-glow" class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-10 transition-all duration-700"></div>
+
+                <!-- ZONE HEADER -->
+                <div class="p-6 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="zone-tag" class="text-xs px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-bold uppercase tracking-widest border border-blue-900/60">ZONA 1: LECCIÓN 1</span>
+                            <span id="zone-difficulty" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold uppercase tracking-widest">Nivel de Entrada</span>
+                        </div>
+                        <h2 id="zone-title" class="text-xl font-bold text-white">El Valle de la Ontología: Fundamentos de la IA</h2>
+                    </div>
+                    <div id="action-stat-badge" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-950 border border-indigo-800/60 rounded-xl text-xs font-bold text-indigo-300">
+                        <i class="fas fa-star text-indigo-400"></i> Desafío de Aprendizaje
+                    </div>
+                </div>
+
+                <!-- ZONE CONTENT & CHALLENGE BODY -->
+                <div class="p-6 flex-grow flex flex-col gap-6 overflow-y-auto max-h-[600px] custom-scrollbar">
+                    
+                    <!-- DYNAMIC CONTAINER FOR EACH ZONE GAMEPLAY -->
+                    <div id="gameplay-content" class="flex flex-col gap-6">
+                        <!-- Content injected via JavaScript -->
+                    </div>
+
+                </div>
+
+                <!-- ZONE FOOTER ACTION BAR -->
+                <div class="p-4 bg-slate-950/80 border-t border-slate-800 flex justify-between items-center">
+                    <div class="text-xs text-slate-400">
+                        Desbloquea el siguiente nivel ganando <span class="text-indigo-400 font-bold">XP</span>
+                    </div>
+                    <button id="btn-main-action" onclick="handleZoneAction()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]">
+                        <span>Comprobar Conocimientos</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- CUSTOM NOTIFICATION POPUPS (Safe Replacement for alert()) -->
+    <div id="custom-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none max-w-sm w-full">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-2xl flex gap-3 items-center">
+            <div id="toast-icon-bg" class="w-10 h-10 rounded-lg flex items-center justify-center text-white shrink-0">
+                <i id="toast-icon" class="fas fa-check"></i>
+            </div>
+            <div>
+                <h4 id="toast-title" class="text-sm font-bold text-slate-200">¡Éxito!</h4>
+                <p id="toast-msg" class="text-xs text-slate-400">Has derrotado al algoritmo y completado el desafío.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-900 p-4 text-center">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <p>© 2026 Inteligencia Artificial - Odisea de Aprendizaje Interactivo</p>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-slate-300">Gobernanza Ética</a>
+                <span>•</span>
+                <a href="#" class="hover:text-slate-300">Tecnologías IA 2026</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT GAMEPLAY ENGINE -->
+    <script>
+        // Game State Variables
+        let playerXP = 0;
+        let playerLevel = 1;
+        let currentActiveZone = 1;
+        let unlockedZones = [1];
+        let audioCtx = null;
+        let soundEnabled = false;
+
+        // Interactive Data Storage (Parsed directly from "Inteligencia Artificial puma.docx")
+        const timelineData = [
+            { years: "1950-1960", title: "Los Orígenes", desc: "Alan Turing propone el histórico test homónimo: 'Una computadora merecería ser llamada inteligente si pudiera engañar a un humano haciéndole creer que es humana'.", icon: "brain" },
+            { years: "1960-1980", title: "Reglas y Lógica", desc: "Nacen los sistemas expertos y la IA basada en reglas programadas lógicas de manera determinista.", icon: "project-diagram" },
+            { years: "1980-2000", title: "Aprendizaje y Datos", desc: "Surgen las primeras redes neuronales y el análisis estructurado de datos automáticos.", icon: "network-wired" },
+            { years: "2000-2015", title: "IA Cotidiana", desc: "Integración masiva de asistentes de voz virtuales inteligentes en smartphones.", icon: "mobile-alt" },
+            { years: "2016-2020", title: "Era de Deep Learning", desc: "Hitos icónicos como AlphaGo venciendo campeones mundiales e inicio de modelos transformadores.", icon: "microchip" },
+            { years: "2024-2026", title: "Ecosistema de IA Moderna", desc: "Modelos multimodales avanzados y agentes autónomos escalando en gobiernos, empresas y oficinas.", icon: "globe" }
+        ];
+
+        // Synthesizer Audio Engine (Using HTML5 Web Audio API)
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playRetroSound(frequency, duration, type = "sine") {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio no soportado");
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                initAudio();
+                icon.className = "fas fa-volume-up text-indigo-400";
+                playRetroSound(523.25, 0.15); // C5
+            } else {
+                icon.className = "fas fa-volume-mute text-slate-400";
+            }
+        }
+
+        function triggerLevelUp() {
+            playRetroSound(523.25, 0.1);
+            setTimeout(() => playRetroSound(659.25, 0.1), 100);
+            setTimeout(() => playRetroSound(783.99, 0.1), 200);
+            setTimeout(() => playRetroSound(1046.50, 0.3, "sawtooth"), 300);
+        }
+
+        // Custom non-intrusive Toast Notifications
+        function showNotification(title, message, type = "success") {
+            const toast = document.getElementById('custom-toast');
+            const iconBg = document.getElementById('toast-icon-bg');
+            const icon = document.getElementById('toast-icon');
+            const tTitle = document.getElementById('toast-title');
+            const tMsg = document.getElementById('toast-msg');
+
+            tTitle.textContent = title;
+            tMsg.textContent = message;
+
+            if (type === "success") {
+                iconBg.className = "w-10 h-10 rounded-lg flex items-center justify-center text-white shrink-0 bg-emerald-600 glow-green";
+                icon.className = "fas fa-check-circle text-lg";
+                playRetroSound(880, 0.15);
+            } else if (type === "error") {
+                iconBg.className = "w-10 h-10 rounded-lg flex items-center justify-center text-white shrink-0 bg-rose-600 glow-red";
+                icon.className = "fas fa-exclamation-triangle text-lg";
+                playRetroSound(220, 0.3, "sawtooth");
+            } else {
+                iconBg.className = "w-10 h-10 rounded-lg flex items-center justify-center text-white shrink-0 bg-blue-600 glow-blue";
+                icon.className = "fas fa-info-circle text-lg";
+                playRetroSound(440, 0.1);
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 4500);
+        }
+
+        // Player XP Management
+        function addXP(amount) {
+            playerXP += amount;
+            let neededXP = playerLevel * 500;
+            if (playerXP >= neededXP) {
+                playerXP -= neededXP;
+                playerLevel++;
+                document.getElementById('player-level').textContent = playerLevel;
+                triggerLevelUp();
+                showNotification("¡NIVEL ALCANZADO!", `¡Puma Explorer ha subido al Nivel ${playerLevel}!`, "success");
+            }
+            
+            // Render Progress Bar
+            const xpPercentage = (playerXP / (playerLevel * 500)) * 100;
+            document.getElementById('xp-progress-bar').style.width = `${xpPercentage}%`;
+            document.getElementById('xp-text').textContent = `${playerXP} / ${playerLevel * 500}`;
+        }
+
+        // Navigation and Map Logic
+        function selectZone(zoneId) {
+            if (!unlockedZones.includes(zoneId)) {
+                showNotification("Reino Bloqueado", "Debes completar las misiones de la zona anterior antes de ingresar.", "error");
+                return;
+            }
+            currentActiveZone = zoneId;
+            playRetroSound(330, 0.1);
+            renderActiveZone();
+        }
+
+        function unlockNextZone(zoneId) {
+            if (!unlockedZones.includes(zoneId)) {
+                unlockedZones.push(zoneId);
+                const badge = document.getElementById(`badge-zone-${zoneId}`);
+                badge.className = "text-xs px-2 py-1 bg-emerald-950 text-emerald-400 border border-emerald-900/60 rounded-md font-bold";
+                badge.textContent = "Abierto";
+                showNotification("¡Nuevo Reino Descubierto!", `Has desbloqueado la Zona ${zoneId}.`, "success");
+            }
+        }
+
+        // Render content depending on active zone
+        function renderActiveZone() {
+            const container = document.getElementById('gameplay-content');
+            const zoneTag = document.getElementById('zone-tag');
+            const zoneTitle = document.getElementById('zone-title');
+            const actionBadge = document.getElementById('action-stat-badge');
+            const mainActionBtn = document.getElementById('btn-main-action');
+            const glowTheme = document.getElementById('zone-theme-glow');
+
+            // Reset dynamic structures
+            container.innerHTML = "";
+
+            // Dynamic Styling based on the Zone
+            if (currentActiveZone === 1) {
+                glowTheme.className = "absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-10 transition-all duration-700";
+                zoneTag.textContent = "ZONA 1: LECCIÓN 1";
+                zoneTag.className = "text-xs px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-bold uppercase tracking-widest border border-blue-900/60";
+                zoneTitle.textContent = "El Valle de la Ontología: Fundamentos de la IA";
+                actionBadge.innerHTML = `<i class="fas fa-cubes text-blue-400"></i> Anatomía y Procesamiento`;
+                mainActionBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]";
+                mainActionBtn.innerHTML = `<span>Probar Tokenizer</span> <i class="fas fa-play"></i>`;
+
+                container.innerHTML = `
+                    <!-- Ontological Layers Accordion -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-1.5">
+                            <i class="fas fa-layer-group"></i> Estructura Jerárquica: De lo General a lo Especializado
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                                <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">La Gran Esfera</span>
+                                <h4 class="text-xs font-bold text-slate-200 mt-1">1. Inteligencia Artificial</h4>
+                                <p class="text-[11px] text-slate-400 mt-1">Máquinas de cálculo avanzado que no piensan de verdad, calculan de forma veloz y masiva.</p>
+                            </div>
+                            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                                <span class="text-[10px] text-purple-400 font-bold uppercase tracking-wider">El Núcleo Autónomo</span>
+                                <h4 class="text-xs font-bold text-slate-200 mt-1">2. Machine Learning</h4>
+                                <p class="text-[11px] text-slate-400 mt-1">Aprende solo mediante millones de ejemplos y optimiza a medida que se inyectan más datos.</p>
+                            </div>
+                            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Red Neuronal</span>
+                                <h4 class="text-xs font-bold text-slate-200 mt-1">3. Deep Learning</h4>
+                                <p class="text-[11px] text-slate-400 mt-1">Inspirado en capas de neuronas cerebrales, calculando desde conceptos simples a sumamente especializados.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Tokenizer Simulator -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-blue-400 mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-cut"></i> Simulador de Tokenizer: ¿Cómo se procesa una frase?
+                        </h3>
+                        <p class="text-xs text-slate-400 mb-3">La IA no lee palabras como nosotros, las divide en fragmentos matemáticos (tokens). Prueba escribiendo abajo:</p>
+                        <div class="flex gap-2">
+                            <input id="tokenizer-input" type="text" class="flex-grow bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-500" value="el gato es negro">
+                            <button onclick="processTokens()" class="px-4 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-lg transition">Dividir</button>
+                        </div>
+                        <div id="tokenizer-output" class="flex flex-wrap gap-2 mt-4 min-h-[50px] items-center">
+                            <!-- Tokens outputted here -->
+                        </div>
+                    </div>
+
+                    <!-- Interactive History Timeline -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-1.5">
+                            <i class="fas fa-history"></i> Línea de Tiempo de la IA (1950 - 2026)
+                        </h3>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            ${timelineData.map((t, idx) => `
+                                <button onclick="selectTimeline(${idx})" class="px-3 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 font-bold rounded-full transition">
+                                    ${t.years}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="timeline-display" class="p-3 bg-slate-900 border border-slate-800 rounded-lg">
+                            <h4 class="text-xs font-bold text-indigo-400">Haz clic en un año arriba para explorar hitos históricos</h4>
+                        </div>
+                    </div>
+                `;
+                // Initial load triggers
+                processTokens();
+                selectTimeline(5); // Default to current era
+            }
+
+            else if (currentActiveZone === 2) {
+                glowTheme.className = "absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10 transition-all duration-700";
+                zoneTag.textContent = "ZONA 2: LECCIÓN 2";
+                zoneTag.className = "text-xs px-2 py-0.5 rounded bg-purple-950 text-purple-400 font-bold uppercase tracking-widest border border-purple-900/60";
+                zoneTitle.textContent = "El Laberinto de los Prompts: Combate contra la Alucinación";
+                actionBadge.innerHTML = `<i class="fas fa-shield-halved text-purple-400"></i> Desafío de Combate de Rol`;
+                mainActionBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]";
+                mainActionBtn.innerHTML = `<span>¡ATACAR CON PROMPT!</span> <i class="fas fa-burst animate-spin"></i>`;
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- BOSS STATS CARD -->
+                        <div class="p-4 bg-slate-950 border border-purple-900/50 rounded-xl relative overflow-hidden flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] text-rose-500 font-bold uppercase tracking-wider block">Amenaza Activa</span>
+                                <h3 class="text-base font-bold text-rose-400 mt-1 flex items-center gap-1.5">
+                                    <i class="fas fa-dragon"></i> Quimera de la Alucinación
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">La Quimera confunde al reino inventando fuentes inexistentes y creando datos falsos. Para derrotarla, necesitas armar un prompt usando un framework lógico estructurado.</p>
+                            </div>
+
+                            <div class="my-4">
+                                <div class="flex justify-between text-xs font-bold text-rose-400 mb-1">
+                                    <span>Puntos de Vida (HP)</span>
+                                    <span id="boss-hp-text">100 / 100</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-rose-950">
+                                    <div id="boss-hp-bar" class="bg-gradient-to-r from-rose-600 to-red-500 h-full transition-all duration-300" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-rose-950/20 border border-rose-900/30 rounded-lg text-[11px] text-rose-300 flex items-start gap-1.5">
+                                <i class="fas fa-lightbulb"></i>
+                                <span><strong>Pista:</strong> Selecciona un Rol fuerte, define una Tarea estructurada y determina un Formato limpio para infligir el daño máximo.</span>
+                            </div>
+                        </div>
+
+                        <!-- PROMPT BUILDER INTERFACE -->
+                        <div class="p-4 bg-slate-950 border border-purple-950 rounded-xl flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5">
+                                <i class="fas fa-wrench"></i> Forja de Prompt (Arma RTF)
+                            </h3>
+                            
+                            <!-- Role Dropdown -->
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Rol (Quién actúa la IA)</label>
+                                <select id="prompt-role" class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded p-2 focus:outline-none focus:border-purple-500">
+                                    <option value="none">-- Selecciona un Rol --</option>
+                                    <option value="marketing">Experto en Marketing Estratégico de Oficinas</option>
+                                    <option value="analyst">Analista Científico Senior en Patrones de IA</option>
+                                    <option value="auditor">Auditor Especializado en Cumplimiento Ético</option>
+                                </select>
+                            </div>
+
+                            <!-- Task Dropdown -->
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Tarea (Qué debe hacer exactamente)</label>
+                                <select id="prompt-task" class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded p-2 focus:outline-none focus:border-purple-500">
+                                    <option value="none">-- Selecciona una Tarea --</option>
+                                    <option value="redact">Redactar un correo corporativo formal de ventas</option>
+                                    <option value="check">Identificar sesgos y auditar datos sensibles de clientes</option>
+                                    <option value="summarize">Sintetizar un informe de 50 páginas sobre riesgos de IA</option>
+                                </select>
+                            </div>
+
+                            <!-- Format Dropdown -->
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Formato (Cómo debe presentarse)</label>
+                                <select id="prompt-format" class="w-full bg-slate-900 border border-slate-800 text-xs text-slate-200 rounded p-2 focus:outline-none focus:border-purple-500">
+                                    <option value="none">-- Selecciona el Formato --</option>
+                                    <option value="markdown">Markdown estructurado con viñetas elegantes</option>
+                                    <option value="brief">Resumen ejecutivo de 3 párrafos formales</option>
+                                    <option value="json">Código JSON estrictamente clasificado y etiquetado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            else if (currentActiveZone === 3) {
+                glowTheme.className = "absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -z-10 transition-all duration-700";
+                zoneTag.textContent = "ZONA 3: LECCIÓN 3";
+                zoneTag.className = "text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold uppercase tracking-widest border border-emerald-900/60";
+                zoneTitle.textContent = "La Ciudad de las Plataformas: Sincronización de Habilidades";
+                actionBadge.innerHTML = `<i class="fas fa-link text-emerald-400"></i> Desafío de Clasificación`;
+                mainActionBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]";
+                mainActionBtn.innerHTML = `<span>Validar Emparejamiento</span> <i class="fas fa-check-double"></i>`;
+
+                container.innerHTML = `
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+                            <i class="fas fa-network-wired"></i> Clasificación de la Biblioteca de Herramientas
+                        </h3>
+                        <p class="text-xs text-slate-400">Une cada plataforma con la categoría tecnológica de la oficina que le corresponda según el decreto.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- LEFT SIDE: Tool Cards with Select Options -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col gap-3">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Herramientas a Categorizar</h4>
+                            
+                            <div class="flex items-center justify-between p-2 bg-slate-900 border border-slate-800 rounded">
+                                <div class="flex items-center gap-2 text-xs text-slate-100 font-bold">
+                                    <i class="fas fa-comments text-blue-400"></i> Claude (Anthropic)
+                                </div>
+                                <select id="match-claude" class="bg-slate-950 text-xs text-slate-300 border border-slate-800 rounded p-1">
+                                    <option value="none">Seleccionar...</option>
+                                    <option value="general">Conversacional General</option>
+                                    <option value="slides">Creación de Presentaciones</option>
+                                    <option value="tasks">Gestión de Tareas</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between p-2 bg-slate-900 border border-slate-800 rounded">
+                                <div class="flex items-center gap-2 text-xs text-slate-100 font-bold">
+                                    <i class="fas fa-project-diagram text-yellow-400"></i> ClickUp Brain
+                                </div>
+                                <select id="match-clickup" class="bg-slate-950 text-xs text-slate-300 border border-slate-800 rounded p-1">
+                                    <option value="none">Seleccionar...</option>
+                                    <option value="general">Conversacional General</option>
+                                    <option value="slides">Creación de Presentaciones</option>
+                                    <option value="tasks">Gestión de Tareas</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between p-2 bg-slate-900 border border-slate-800 rounded">
+                                <div class="flex items-center gap-2 text-xs text-slate-100 font-bold">
+                                    <i class="fas fa-images text-indigo-400"></i> Gamma (Magic AI)
+                                </div>
+                                <select id="match-gamma" class="bg-slate-950 text-xs text-slate-300 border border-slate-800 rounded p-1">
+                                    <option value="none">Seleccionar...</option>
+                                    <option value="general">Conversacional General</option>
+                                    <option value="slides">Creación de Presentaciones</option>
+                                    <option value="tasks">Gestión de Tareas</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT SIDE: Categories Definitions -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col gap-3">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Claves de Categorías</h4>
+                            
+                            <div class="p-2.5 bg-slate-900/50 border border-slate-800 rounded flex gap-2.5 items-start">
+                                <span class="text-xs font-extrabold px-1.5 py-0.5 bg-indigo-950 text-indigo-400 border border-indigo-900/60 rounded">CG</span>
+                                <p class="text-[11px] text-slate-400"><strong class="text-slate-200 block">Conversacional General:</strong> Actúa como consultor multipropósito, corrector de literatura y analista de códigos complejos.</p>
+                            </div>
+
+                            <div class="p-2.5 bg-slate-900/50 border border-slate-800 rounded flex gap-2.5 items-start">
+                                <span class="text-xs font-extrabold px-1.5 py-0.5 bg-yellow-950 text-yellow-400 border border-yellow-900/60 rounded">GT</span>
+                                <p class="text-[11px] text-slate-400"><strong class="text-slate-200 block">Gestión de Tareas:</strong> Organiza calendarios automáticamente y resume tareas en equipos de trabajo.</p>
+                            </div>
+
+                            <div class="p-2.5 bg-slate-900/50 border border-slate-800 rounded flex gap-2.5 items-start">
+                                <span class="text-xs font-extrabold px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-900/60 rounded">CP</span>
+                                <p class="text-[11px] text-slate-400"><strong class="text-slate-200 block">Creación de Presentaciones:</strong> Genera diapositivas completas a partir de texto o descripciones breves en 3 minutos.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            else if (currentActiveZone === 4) {
+                glowTheme.className = "absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -z-10 transition-all duration-700";
+                zoneTag.textContent = "ZONA 4: LECCIÓN 4";
+                zoneTag.className = "text-xs px-2 py-0.5 rounded bg-yellow-950 text-yellow-400 font-bold uppercase tracking-widest border border-yellow-900/60";
+                zoneTitle.textContent = "El Templo de la Ofimática: Despliegue de Investigadores";
+                actionBadge.innerHTML = `<i class="fas fa-briefcase text-yellow-400"></i> Simulador de Desiciones de Oficina`;
+                mainActionBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-500 hover:to-amber-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]";
+                mainActionBtn.innerHTML = `<span>Resolver Misión</span> <i class="fas fa-paper-plane"></i>`;
+
+                container.innerHTML = `
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-yellow-400 mb-1 flex items-center gap-1.5">
+                            <i class="fas fa-microchip"></i> Despliegue de Asistentes en la Oficina
+                        </h3>
+                        <p class="text-xs text-slate-400">En esta simulación, eres el Director de Tecnología de la Oficina. Elige la herramienta exacta que resuelva el siguiente problema sin fallas:</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- OFFICE BRIEF CASE -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] text-yellow-400 font-bold uppercase tracking-wider block">Misión Actual</span>
+                                <h3 class="text-sm font-bold text-slate-200 mt-1">"La Alquimia del Paper Científico"</h3>
+                                <p class="text-xs text-slate-400 mt-2">La gerencia necesita auditar urgentemente 500 artículos científicos y médicos, y extraer de manera transparente citas e hipótesis comprobables que apoyen la toma de decisiones.</p>
+                            </div>
+                            
+                            <div class="p-3 bg-yellow-950/20 border border-yellow-900/30 rounded-lg mt-4 text-[11px] text-yellow-300">
+                                <strong>Requisito clave:</strong> Buscar literatura indexada con alto rigor académico, interactuar de manera conversacional solo con las fuentes y evitar alucinaciones.
+                            </div>
+                        </div>
+
+                        <!-- TOOL CARD LIST OPTIONS -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col gap-3">
+                            <h4 class="text-xs font-bold text-yellow-400 uppercase tracking-widest mb-1">Elige tu Escuadrón</h4>
+                            
+                            <button onclick="selectOficinaTool('languagetool')" id="opt-languagetool" class="w-full text-left p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg transition-all flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
+                                        <i class="fas fa-spell-check"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-200">LanguageTool / Lorca</h4>
+                                        <p class="text-[10px] text-slate-400">Correctores ortográficos y optimizadores de legibilidad.</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-circle text-slate-600" id="circle-languagetool"></i>
+                            </button>
+
+                            <button onclick="selectOficinaTool('notebooklm')" id="opt-notebooklm" class="w-full text-left p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg transition-all flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-slate-950 flex items-center justify-center text-indigo-400 text-sm">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-200">NotebookLM (Google)</h4>
+                                        <p class="text-[10px] text-slate-400">Chatea con PDFs para sintetizar y resumir tus propios documentos.</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-circle text-slate-600" id="circle-notebooklm"></i>
+                            </button>
+
+                            <button onclick="selectOficinaTool('scispace')" id="opt-scispace" class="w-full text-left p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg transition-all flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-slate-950 flex items-center justify-center text-yellow-400 text-sm">
+                                        <i class="fas fa-flask"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-200">SciSpace / Consensus</h4>
+                                        <p class="text-[10px] text-slate-400">Motores de búsqueda de artículos con extracción de datos científicos.</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-circle text-slate-600" id="circle-scispace"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            else if (currentActiveZone === 5) {
+                glowTheme.className = "absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl -z-10 transition-all duration-700";
+                zoneTag.textContent = "ZONA 5: LECCIÓN 5";
+                zoneTag.className = "text-xs px-2 py-0.5 rounded bg-rose-950 text-rose-400 font-bold uppercase tracking-widest border border-rose-900/60";
+                zoneTitle.textContent = "La Torre de la Gobernanza: Escudo de Privacidad y Ética";
+                actionBadge.innerHTML = `<i class="fas fa-user-shield text-rose-400"></i> Desafío Ético de Gobernanza`;
+                mainActionBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 hover:scale-[1.03]";
+                mainActionBtn.innerHTML = `<span>Activar Cortafuegos</span> <i class="fas fa-key"></i>`;
+
+                container.innerHTML = `
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-rose-400 mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-gavel"></i> Auditoría Ética y Ley de Gobernanza
+                        </h3>
+                        <p class="text-xs text-slate-400">Tu red está siendo infiltrada por vulnerabilidades operativas. Debes activar los controles de protección de datos correctos en las políticas de tu empresa para bloquear brechas de soberanía.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- CORE ETHICAL PILLARS -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col gap-3">
+                            <h4 class="text-xs font-bold text-rose-400 uppercase tracking-widest">Controles Corporativos de Seguridad</h4>
+                            
+                            <!-- Checkbox 1 -->
+                            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-start gap-3">
+                                <input type="checkbox" id="chk-ndc" class="mt-1 rounded border-slate-800 text-rose-600 focus:ring-rose-500">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-100">Cláusula de No Divulgación (Non-disclosure)</h4>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Instrucciones específicas para que empleados no carguen secretos comerciales de la empresa en prompts públicos.</p>
+                                </div>
+                            </div>
+
+                            <!-- Checkbox 2 -->
+                            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-start gap-3">
+                                <input type="checkbox" id="chk-explain" class="mt-1 rounded border-slate-800 text-rose-600 focus:ring-rose-500">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-100">Cadena de Pensamiento (Explicabilidad)</h4>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Permite que el sistema de IA saque a la luz sus razonamientos paso a paso antes de emitir un veredicto.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- THREAT MONITOR -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] text-rose-500 font-bold uppercase tracking-wider block">Estado de Vulnerabilidades</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping"></div>
+                                    <h3 class="text-xs font-bold text-slate-200">2 Brechas Identificadas</h3>
+                                </div>
+                                <div class="mt-3 flex flex-col gap-2">
+                                    <div class="p-2 bg-slate-900 text-[10px] text-amber-300 border-l-2 border-amber-500 rounded">
+                                        "Los empleados están ingresando contratos confidenciales en ChatGPT para resumirlos"
+                                    </div>
+                                    <div class="p-2 bg-slate-900 text-[10px] text-amber-300 border-l-2 border-amber-500 rounded">
+                                        "El bot de atención al cliente está tomando decisiones de crédito sin poder justificar su razonamiento"
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-2.5 bg-rose-950/20 border border-rose-900/30 rounded-lg text-[10px] text-rose-300">
+                                <strong>Misión:</strong> Activa los dos cortafuegos que mitiguen directamente estas brechas corporativas.
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }
+        }
+
+        // Zone 1 Helper Functions
+        function processTokens() {
+            const input = document.getElementById('tokenizer-input').value.trim();
+            const output = document.getElementById('tokenizer-output');
+            output.innerHTML = "";
+
+            if (!input) return;
+
+            // Simple mock tokenizer (splits space, and gives vector classifications)
+            const words = input.split(/\s+/);
+            words.forEach((word, index) => {
+                const tokenCard = document.createElement('div');
+                tokenCard.className = "px-3 py-1.5 bg-blue-950/50 border border-blue-900/40 rounded-lg text-xs font-bold text-blue-300 flex items-center gap-1.5 transform hover:scale-105 transition cursor-pointer";
+                tokenCard.innerHTML = `
+                    <span class="text-[9px] px-1 py-0.5 bg-blue-900 rounded text-blue-100">${index + 1}</span>
+                    <span>"${word}"</span>
+                    <span class="text-[9px] text-blue-400">#v${100 + Math.floor(Math.random() * 899)}</span>
+                `;
+                output.appendChild(tokenCard);
+            });
+            playRetroSound(600, 0.1);
+        }
+
+        function selectTimeline(index) {
+            const display = document.getElementById('timeline-display');
+            const data = timelineData[index];
+            display.innerHTML = `
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-xs px-2 py-0.5 bg-indigo-950 text-indigo-300 rounded font-bold">${data.years}</span>
+                    <h4 class="text-xs font-bold text-slate-100">${data.title}</h4>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">${data.desc}</p>
+            `;
+            playRetroSound(440, 0.08);
+        }
+
+        // Zone 2 Logic
+        let bossHP = 100;
+        function handlePromptAttack() {
+            const role = document.getElementById('prompt-role').value;
+            const task = document.getElementById('prompt-task').value;
+            const format = document.getElementById('prompt-format').value;
+
+            if (role === "none" || task === "none" || format === "none") {
+                showNotification("Prompt Incompleto", "Asegúrate de llenar las tres variables (Rol, Tarea y Formato) del framework RTF para forjar tu ataque.", "error");
+                return;
+            }
+
+            // Calculation based on optimal match combos
+            let damage = 20;
+            let successMessage = "";
+
+            if (role === "auditor" && task === "check" && format === "json") {
+                damage = 50; // Critical attack combo
+                successMessage = "¡CRÍTICO! Has forjado un prompt perfecto para detectar sesgos, encapsulando tus resultados en un código JSON altamente estructurado.";
+            } else if (role === "marketing" && task === "redact" && format === "markdown") {
+                damage = 40;
+                successMessage = "¡ATAQUE FUERTE! Excelente prompt de comunicación corporativa estructurado en Markdown.";
+            } else if (role === "analyst" && task === "summarize" && format === "brief") {
+                damage = 45;
+                successMessage = "¡SÚPER COMBO! El analista procesó el paper con total precisión mediante un resumen de 3 párrafos impecables.";
+            } else {
+                damage = 25;
+                successMessage = "¡Golpe Directo! Aunque el prompt causó daño, no era una combinación optimizada para la labor.";
+            }
+
+            bossHP = Math.max(0, bossHP - damage);
+            document.getElementById('boss-hp-text').textContent = `${bossHP} / 100`;
+            document.getElementById('boss-hp-bar').style.width = `${bossHP}%`;
+
+            if (bossHP <= 0) {
+                playRetroSound(1000, 0.4);
+                showNotification("¡Enemigo Derrotado!", "Has vencido a la Alucinación y restaurado el orden en el Laberinto.", "success");
+                addXP(250);
+                unlockNextZone(3);
+                selectZone(3);
+            } else {
+                playRetroSound(300, 0.2, "square");
+                showNotification("Ataque Exitoso", `${successMessage} Infligiste ${damage} de daño.`, "info");
+            }
+        }
+
+        // Zone 3 Logic
+        function validateMatching() {
+            const claude = document.getElementById('match-claude').value;
+            const clickup = document.getElementById('match-clickup').value;
+            const gamma = document.getElementById('match-gamma').value;
+
+            if (claude === "none" || clickup === "none" || gamma === "none") {
+                showNotification("Faltan Elementos", "Debes seleccionar una categoría para todas las herramientas.", "error");
+                return;
+            }
+
+            if (claude === "general" && clickup === "tasks" && gamma === "slides") {
+                showNotification("¡Emparejamiento Perfecto!", "Has sincronizado correctamente las herramientas de la biblioteca.", "success");
+                addXP(300);
+                unlockNextZone(4);
+                selectZone(4);
+            } else {
+                showNotification("Error de Sincronización", "Algunas herramientas no están en su lugar correcto. Revisa el lore y vuelve a intentarlo.", "error");
+            }
+        }
+
+        // Zone 4 Logic
+        let selectedOficinaTool = "";
+        function selectOficinaTool(toolId) {
+            selectedOficinaTool = toolId;
+            const tools = ["languagetool", "notebooklm", "scispace"];
+            
+            tools.forEach(t => {
+                const button = document.getElementById(`opt-${t}`);
+                const circle = document.getElementById(`circle-${t}`);
+                if (t === toolId) {
+                    button.className = "w-full text-left p-3 bg-yellow-950/40 hover:bg-yellow-900/30 border border-yellow-500 rounded-lg transition-all flex items-center justify-between";
+                    circle.className = "fas fa-check-circle text-yellow-500";
+                } else {
+                    button.className = "w-full text-left p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg transition-all flex items-center justify-between";
+                    circle.className = "far fa-circle text-slate-600";
+                }
+            });
+            playRetroSound(500, 0.08);
+        }
+
+        function validateOficinaMission() {
+            if (!selectedOficinaTool) {
+                showNotification("Selecciona una opción", "Debes desplegar una herramienta para solventar el brief.", "error");
+                return;
+            }
+
+            if (selectedOficinaTool === "scispace") {
+                showNotification("¡Misión Completada!", "Excelente decisión. SciSpace y Consensus están diseñados para buscar, auditar y contrastar millones de estudios académicos.", "success");
+                addXP(350);
+                unlockNextZone(5);
+                selectZone(5);
+            } else if (selectedOficinaTool === "notebooklm") {
+                showNotification("Éxito Parcial", "NotebookLM es genial para chatear con tus propios PDFs, pero no cuenta con un indexador masivo de estudios científicos.", "error");
+            } else {
+                showNotification("Despliegue Incorrecto", "LanguageTool solo corrige ortografía y redacción. No soluciona este caso de investigación profunda.", "error");
+            }
+        }
+
+        // Zone 5 Logic
+        function validateEthicalGate() {
+            const chkNdc = document.getElementById('chk-ndc').checked;
+            const chkExplain = document.getElementById('chk-explain').checked;
+
+            if (chkNdc && chkExplain) {
+                showNotification("¡Escudo Ético al Máximo!", "¡Felicitaciones! Has defendido el reino. Tu gobernanza, seguridad y ética son perfectas.", "success");
+                addXP(500);
+                // Game Finished Showcase Modal Text
+                const container = document.getElementById('gameplay-content');
+                container.innerHTML = `
+                    <div class="bg-slate-950 border border-emerald-900 p-6 rounded-2xl text-center flex flex-col items-center justify-center gap-4">
+                        <div class="w-16 h-16 bg-emerald-950 text-emerald-400 rounded-full flex items-center justify-center text-3xl animate-bounce">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100">¡La Odisea de la IA ha Sido Completada!</h3>
+                        <p class="text-xs text-slate-400 max-w-md">
+                            Has dominado con maestría los fundamentos ontológicos de la IA, la forja de prompts profesionales, las plataformas productivas, las aplicaciones para la oficina y la gobernanza ética corporativa según el decreto.
+                        </p>
+                        <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl w-full text-left text-xs text-slate-300">
+                            <strong>Tu Puntaje de Graduación:</strong> Nivel de Jugador ${playerLevel} - Explorer de Honor.
+                        </div>
+                        <button onclick="resetGame()" class="px-6 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs rounded-xl transition hover:scale-105">
+                            Volver a Jugar
+                        </button>
+                    </div>
+                `;
+            } else {
+                showNotification("Cortafuegos Incompletos", "Debes activar ambos mecanismos de seguridad claves para mitigar las brechas identificadas.", "error");
+            }
+        }
+
+        // Main Route Dispatcher for action button
+        function handleZoneAction() {
+            if (currentActiveZone === 1) {
+                // Instantly level up visual tokenizer
+                processTokens();
+                addXP(100);
+                showNotification("Siguiente Paso", "Has procesado tus tokens. Continúa interactuando o pasa a la siguiente zona en el mapa.", "info");
+                // Auto-unblocks zone 2 to let them continue naturally
+                unlockNextZone(2);
+            } else if (currentActiveZone === 2) {
+                handlePromptAttack();
+            } else if (currentActiveZone === 3) {
+                validateMatching();
+            } else if (currentActiveZone === 4) {
+                validateOficinaMission();
+            } else if (currentActiveZone === 5) {
+                validateEthicalGate();
+            }
+        }
+
+        function resetGame() {
+            playerXP = 0;
+            playerLevel = 1;
+            currentActiveZone = 1;
+            unlockedZones = [1];
+            
+            // Lock map tags back to standard
+            for (let i = 2; i <= 5; i++) {
+                const badge = document.getElementById(`badge-zone-${i}`);
+                badge.className = "text-xs px-2 py-1 bg-slate-900 text-slate-500 border border-slate-800 rounded-md font-bold";
+                badge.textContent = "Bloqueado";
+            }
+            
+            selectZone(1);
+            addXP(0); // Trigger visual reset
+            showNotification("Juego Reiniciado", "Emprendiendo una nueva odisea de conocimiento.", "info");
+        }
+
+        // On window load initialization
+        window.onload = function() {
+            renderActiveZone();
+            addXP(0); // Set progress bar initial visual
+        };
+    </script>
+</body>
+</html>
