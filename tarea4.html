@@ -8,8 +8,7 @@
   <style>
     /* =========================================================
        ZONA PERSONALIZABLE: VARIABLES DE DISEÑO
-       Puedes ajustar colores, sombras, bordes y tipografías aquí.
-    ========================================================= */
+       ========================================================= */
     :root {
       --black: #050505;
       --black-soft: #111827;
@@ -20,9 +19,9 @@
       --text: #1f2937;
       --muted: #6b7280;
       --line: #e5e7eb;
-      --green: #0f766e;
-      --blue: #1d4ed8;
+      --blue: #2563eb;
       --purple: #7c3aed;
+      --green: #0f766e;
       --red: #b91c1c;
       --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
       --radius: 18px;
@@ -43,7 +42,7 @@
 
     /* =========================================================
        ENCABEZADO PRINCIPAL
-    ========================================================= */
+       ========================================================= */
     header {
       background: linear-gradient(135deg, #000000, #151515);
       color: white;
@@ -97,7 +96,7 @@
 
     /* =========================================================
        LAYOUT GENERAL
-    ========================================================= */
+       ========================================================= */
     .app {
       max-width: 1500px;
       margin: 22px auto;
@@ -283,7 +282,7 @@
 
     /* =========================================================
        CONTENIDO PRINCIPAL
-    ========================================================= */
+       ========================================================= */
     .content {
       display: grid;
       gap: 18px;
@@ -326,7 +325,9 @@
       letter-spacing: 0.04em;
     }
 
-    /* Indicadores rápidos */
+    /* =========================================================
+       INDICADORES RÁPIDOS
+       ========================================================= */
     .kpis {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -381,6 +382,9 @@
       margin-top: 8px;
     }
 
+    /* =========================================================
+       GRÁFICOS
+       ========================================================= */
     .charts-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -420,7 +424,9 @@
       display: block;
     }
 
-    /* Tabla */
+    /* =========================================================
+       TABLA
+       ========================================================= */
     .table-tools {
       display: flex;
       justify-content: space-between;
@@ -515,8 +521,8 @@
     }
 
     /* =========================================================
-       RESPONSIVE: TABLET Y MÓVIL
-    ========================================================= */
+       RESPONSIVE
+       ========================================================= */
     @media (max-width: 1100px) {
       .app {
         grid-template-columns: 1fr;
@@ -579,21 +585,24 @@
 <body>
   <!-- =========================================================
        ENCABEZADO NEGRO CON TÍTULO DORADO
-  ========================================================= -->
+       ========================================================= -->
   <header>
     <div class="header-content">
       <div class="brand">
         <h1>Gestion Financiera estatal en Salarios</h1>
         <p>Portal Estadístico sobre género, remuneraciones y acceso a oportunidades</p>
       </div>
-      <div class="header-badge" id="lastUpdate">Conectando con Google Sheets...</div>
+
+      <div class="header-badge" id="lastUpdate">
+        Conectando con Google Sheets...
+      </div>
     </div>
   </header>
 
   <div class="app">
     <!-- =========================================================
          PANEL LATERAL POR INSTITUCIÓN
-    ========================================================= -->
+         ========================================================= -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2>Instituciones</h2>
@@ -608,6 +617,7 @@
           placeholder="Buscar institución..."
           autocomplete="off"
         />
+
         <button id="clearSelectionBtn" class="btn btn-gold" type="button">
           Ver todas las instituciones
         </button>
@@ -623,7 +633,7 @@
 
     <!-- =========================================================
          CONTENIDO PRINCIPAL
-    ========================================================= -->
+         ========================================================= -->
     <main class="content">
       <section id="loadingState" class="status">
         <div class="loader"></div>
@@ -637,7 +647,9 @@
         <div>⚠️</div>
         <div>
           <strong>No fue posible cargar los datos.</strong><br />
-          <span id="errorMessage">Revise la conexión o que el CSV esté publicado correctamente.</span>
+          <span id="errorMessage">
+            Revise la conexión o que el CSV esté publicado correctamente.
+          </span>
         </div>
       </section>
 
@@ -651,7 +663,7 @@
 
       <!-- =========================================================
            FILTROS PRINCIPALES
-      ========================================================= -->
+           ========================================================= -->
       <section class="panel">
         <h2>Panel de análisis</h2>
         <p class="panel-subtitle">
@@ -686,14 +698,16 @@
 
           <div class="field">
             <label>&nbsp;</label>
-            <button id="resetBtn" class="btn" type="button">Limpiar filtros</button>
+            <button id="resetBtn" class="btn" type="button">
+              Limpiar filtros
+            </button>
           </div>
         </div>
       </section>
 
       <!-- =========================================================
            INDICADORES RÁPIDOS
-      ========================================================= -->
+           ========================================================= -->
       <section class="kpis">
         <article class="kpi">
           <span>Instituciones</span>
@@ -722,19 +736,19 @@
 
       <!-- =========================================================
            GRÁFICOS
-      ========================================================= -->
+           ========================================================= -->
       <section class="charts-grid">
         <article class="chart-card">
-          <h3>Gráfica por año / gestión</h3>
-          <p>Total pagado en salarios por gestión, según los filtros aplicados.</p>
+          <h3>Total pagado por gestión</h3>
+          <p>Total pagado en salarios por año o gestión, según los filtros aplicados.</p>
           <div class="chart-wrap">
             <canvas id="yearChart"></canvas>
           </div>
         </article>
 
         <article class="chart-card">
-          <h3>Salario por género y año</h3>
-          <p>Comparativo de salario de hombres y mujeres por gestión.</p>
+          <h3>Salario por género y gestión</h3>
+          <p>Comparativo de salario promedio de hombres y mujeres por gestión.</p>
           <div class="chart-wrap">
             <canvas id="genderSalaryChart"></canvas>
           </div>
@@ -742,24 +756,24 @@
 
         <article class="chart-card">
           <h3>Distribución por institución</h3>
-          <p>Participación institucional según total pagado en salarios.</p>
+          <p>Participación institucional según el total pagado en salarios.</p>
           <div class="chart-wrap">
             <canvas id="institutionChart"></canvas>
           </div>
         </article>
 
         <article class="chart-card">
-          <h3>Gráfica por puesto / cargo</h3>
-          <p>Se activa si el CSV contiene una columna llamada puesto, cargo, plaza o position.</p>
+          <h3>Evolución de ingresos por género</h3>
+          <p>Línea comparativa de ingresos promedio entre hombres y mujeres por gestión.</p>
           <div class="chart-wrap">
-            <canvas id="positionChart"></canvas>
+            <canvas id="incomeLineChart"></canvas>
           </div>
         </article>
       </section>
 
       <!-- =========================================================
            TABLA DINÁMICA
-      ========================================================= -->
+           ========================================================= -->
       <section class="panel">
         <div class="table-tools">
           <div>
@@ -782,6 +796,7 @@
                 <th class="text-right">Total pagado</th>
               </tr>
             </thead>
+
             <tbody id="dataTable">
               <tr>
                 <td colspan="8" class="muted">Cargando datos...</td>
@@ -801,12 +816,13 @@
     /*
       =========================================================
       CONEXIÓN CON GOOGLE SHEETS
-      El enlace debe estar publicado como CSV.
-      No se utilizan datos simulados.
+
+      IMPORTANTE:
+      La URL debe usar & y NO &amp; dentro de JavaScript.
+      Si aparece &amp; puede generar error 400 en Google.
       =========================================================
     */
-    const CSV_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vTvTGseuuSL9372M51QPZg2f1SOGVMeBWUiiwyz2bImUxwDU3_w6FKJ3sx8k4v1AUVL-HvXpInU1Hh4/pub?output=csv";
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvTGseuuSL9372M51QPZg2f1SOGVMeBWUiiwyz2bImUxwDU3_w6FKJ3sx8k4v1AUVL-HvXpInU1Hh4/pub?gid=1375287430&single=true&output=csv";
 
     /*
       =========================================================
@@ -853,12 +869,12 @@
       yearChart: document.getElementById("yearChart"),
       genderSalaryChart: document.getElementById("genderSalaryChart"),
       institutionChart: document.getElementById("institutionChart"),
-      positionChart: document.getElementById("positionChart")
+      incomeLineChart: document.getElementById("incomeLineChart")
     };
 
     /*
       =========================================================
-      FORMATEO DE NÚMEROS Y MONEDA
+      FORMATEADORES
       =========================================================
     */
     const numberFormatter = new Intl.NumberFormat("es-HN", {
@@ -880,11 +896,25 @@
       return currencyFormatter.format(value || 0);
     }
 
+    function compactNumber(value) {
+      return new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(value || 0);
+    }
+
+    function compactCurrency(value) {
+      return "L " + new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(value || 0);
+    }
+
     /*
       =========================================================
       PROCESAMIENTO DE CSV
-      Parser compatible con separador punto y coma o coma.
-      También respeta comillas dobles.
+      Compatible con separador punto y coma o coma.
+      Respeta campos entre comillas dobles.
       =========================================================
     */
     function detectDelimiter(firstLine) {
@@ -916,6 +946,7 @@
       }
 
       values.push(current.trim());
+
       return values.map(value => value.replace(/^"|"$/g, ""));
     }
 
@@ -926,9 +957,14 @@
         return [];
       }
 
-      const lines = cleanText.split("\n").filter(line => line.trim() !== "");
+      const lines = cleanText
+        .split("\n")
+        .filter(line => line.trim() !== "");
+
       const delimiter = detectDelimiter(lines[0]);
-      const headers = parseCSVLine(lines[0], delimiter).map(h => h.trim());
+
+      const headers = parseCSVLine(lines[0], delimiter)
+        .map(header => header.trim());
 
       return lines.slice(1).map(line => {
         const values = parseCSVLine(line, delimiter);
@@ -944,7 +980,7 @@
 
     /*
       =========================================================
-      NORMALIZACIÓN DE REGISTROS
+      NORMALIZACIÓN DE DATOS
       Convierte textos numéricos a números reales.
       =========================================================
     */
@@ -964,31 +1000,46 @@
 
     function normalizeRow(row) {
       return {
-        institucion: String(row.institucion ?? row.Institucion ?? row.INSTITUCION ?? "").trim(),
-        gestion: String(row.gestion ?? row.Gestion ?? row.GESTION ?? "").trim(),
-        Hombres: toNumber(row.Hombres ?? row.hombres),
-        Mujeres: toNumber(row.Mujeres ?? row.mujeres),
-        Salario_Hombres: toNumber(row.Salario_Hombres ?? row.salario_hombres),
-        Salario_Mujeres: toNumber(row.Salario_Mujeres ?? row.salario_mujeres),
-        Total_Empleados: toNumber(row.Total_Empleados ?? row.total_empleados),
-        Total_Pago: toNumber(row.Total_Pago ?? row.total_pago),
-
-        /*
-          Zona flexible:
-          Si más adelante se añade una columna de puesto, cargo o plaza,
-          el gráfico por puesto se activará automáticamente.
-        */
-        puesto: String(
-          row.puesto ??
-          row.Puesto ??
-          row.cargo ??
-          row.Cargo ??
-          row.plaza ??
-          row.Plaza ??
-          row.position ??
-          row.Position ??
+        institucion: String(
+          row.institucion ??
+          row.Institucion ??
+          row.INSTITUCION ??
           ""
         ).trim(),
+
+        gestion: String(
+          row.gestion ??
+          row.Gestion ??
+          row.GESTION ??
+          ""
+        ).trim(),
+
+        Hombres: toNumber(row.Hombres ?? row.hombres),
+        Mujeres: toNumber(row.Mujeres ?? row.mujeres),
+
+        Salario_Hombres: toNumber(
+          row.Salario_Hombres ??
+          row.salario_hombres ??
+          row.SALARIO_HOMBRES
+        ),
+
+        Salario_Mujeres: toNumber(
+          row.Salario_Mujeres ??
+          row.salario_mujeres ??
+          row.SALARIO_MUJERES
+        ),
+
+        Total_Empleados: toNumber(
+          row.Total_Empleados ??
+          row.total_empleados ??
+          row.TOTAL_EMPLEADOS
+        ),
+
+        Total_Pago: toNumber(
+          row.Total_Pago ??
+          row.total_pago ??
+          row.TOTAL_PAGO
+        ),
 
         original: row
       };
@@ -1002,18 +1053,29 @@
     async function loadData() {
       try {
         showLoading(true);
+        hideError();
+
+        console.log("Cargando CSV desde:", CSV_URL);
 
         const response = await fetch(CSV_URL, {
           method: "GET",
           cache: "no-store"
         });
 
+        console.log("Estado de respuesta:", response.status);
+
         if (!response.ok) {
           throw new Error("Respuesta no válida del servidor: " + response.status);
         }
 
         const csvText = await response.text();
-        const parsedData = parseCSV(csvText).filter(row => row.institucion && row.gestion);
+
+        console.log("Vista previa del CSV:");
+        console.log(csvText.substring(0, 300));
+
+        const parsedData = parseCSV(csvText).filter(row => {
+          return row.institucion && row.gestion;
+        });
 
         if (!parsedData.length) {
           throw new Error("El CSV no contiene registros válidos con institución y gestión.");
@@ -1022,7 +1084,8 @@
         state.rawData = parsedData;
         state.filteredData = parsedData;
 
-        el.lastUpdate.textContent = "Datos cargados: " + new Date().toLocaleString("es-HN");
+        el.lastUpdate.textContent =
+          "Datos cargados: " + new Date().toLocaleString("es-HN");
 
         buildFilters();
         applyFilters();
@@ -1036,7 +1099,7 @@
 
     /*
       =========================================================
-      CONSTRUCCIÓN DE FILTROS
+      FILTROS
       =========================================================
     */
     function uniqueSorted(values) {
@@ -1048,7 +1111,9 @@
       const institutions = uniqueSorted(state.rawData.map(row => row.institucion));
       const gestiones = uniqueSorted(state.rawData.map(row => row.gestion));
 
-      el.institutionFilter.innerHTML = '<option value="">Todas las instituciones</option>';
+      el.institutionFilter.innerHTML =
+        '<option value="">Todas las instituciones</option>';
+
       institutions.forEach(institution => {
         const option = document.createElement("option");
         option.value = institution;
@@ -1056,7 +1121,9 @@
         el.institutionFilter.appendChild(option);
       });
 
-      el.gestionFilter.innerHTML = '<option value="">Todas las gestiones</option>';
+      el.gestionFilter.innerHTML =
+        '<option value="">Todas las gestiones</option>';
+
       gestiones.forEach(gestion => {
         const option = document.createElement("option");
         option.value = gestion;
@@ -1065,25 +1132,23 @@
       });
     }
 
-    /*
-      =========================================================
-      APLICACIÓN DE FILTROS, BUSCADOR Y ESTADOS VACÍOS
-      =========================================================
-    */
     function applyFilters() {
       const search = state.searchText.toLowerCase().trim();
 
       state.filteredData = state.rawData.filter(row => {
-        const matchesInstitutionFilter =
-          !state.selectedInstitution || row.institucion === state.selectedInstitution;
+        const matchesInstitution =
+          !state.selectedInstitution ||
+          row.institucion === state.selectedInstitution;
 
-        const matchesGestionFilter =
-          !state.selectedGestion || row.gestion === state.selectedGestion;
+        const matchesGestion =
+          !state.selectedGestion ||
+          row.gestion === state.selectedGestion;
 
         const matchesSearch =
-          !search || row.institucion.toLowerCase().includes(search);
+          !search ||
+          row.institucion.toLowerCase().includes(search);
 
-        return matchesInstitutionFilter && matchesGestionFilter && matchesSearch;
+        return matchesInstitution && matchesGestion && matchesSearch;
       });
 
       el.emptyState.classList.toggle("hidden", state.filteredData.length > 0);
@@ -1096,11 +1161,12 @@
 
     /*
       =========================================================
-      PANEL LATERAL: INSTITUCIONES EXPANDIBLES
+      PANEL LATERAL EXPANDIBLE POR INSTITUCIÓN
       =========================================================
     */
     function renderSidebar() {
       const sideSearch = el.sideSearch.value.toLowerCase().trim();
+
       const institutions = uniqueSorted(
         state.rawData
           .map(row => row.institucion)
@@ -1132,6 +1198,7 @@
         const button = document.createElement("button");
         button.type = "button";
         button.className = "institution-button" + (isActive ? " active" : "");
+
         button.innerHTML = `
           <div>
             <div class="institution-name">${escapeHTML(institution)}</div>
@@ -1145,6 +1212,7 @@
         button.addEventListener("click", () => {
           state.selectedInstitution = institution;
           state.selectedGestion = "";
+
           el.institutionFilter.value = institution;
           el.gestionFilter.value = "";
 
@@ -1164,19 +1232,25 @@
           const chip = document.createElement("button");
           chip.type = "button";
           chip.className = "year-chip" + (
-            state.selectedInstitution === institution && state.selectedGestion === year
+            state.selectedInstitution === institution &&
+            state.selectedGestion === year
               ? " active"
               : ""
           );
+
           chip.textContent = year;
 
           chip.addEventListener("click", event => {
             event.stopPropagation();
+
             state.selectedInstitution = institution;
             state.selectedGestion = year;
+
             el.institutionFilter.value = institution;
             el.gestionFilter.value = year;
+
             state.expandedInstitutions.add(institution);
+
             applyFilters();
           });
 
@@ -1213,13 +1287,14 @@
 
     /*
       =========================================================
-      TABLA DINÁMICA DE REGISTROS
+      TABLA DINÁMICA
       =========================================================
     */
     function renderTable() {
       const data = state.filteredData;
 
-      el.recordCount.textContent = `${formatNumber(data.length)} registro(s) visible(s)`;
+      el.recordCount.textContent =
+        `${formatNumber(data.length)} registro(s) visible(s)`;
 
       if (!data.length) {
         el.dataTable.innerHTML = `
@@ -1246,7 +1321,7 @@
 
     /*
       =========================================================
-      AGRUPACIÓN DE DATOS PARA GRÁFICOS
+      AGRUPACIONES PARA GRÁFICOS
       =========================================================
     */
     function groupSum(data, key, valueKey) {
@@ -1258,31 +1333,39 @@
     }
 
     function groupAverage(data, key, valueKey) {
-      const temp = data.reduce((acc, row) => {
+      const grouped = data.reduce((acc, row) => {
         const label = row[key] || "Sin dato";
-        if (!acc[label]) acc[label] = { sum: 0, count: 0 };
+
+        if (!acc[label]) {
+          acc[label] = {
+            sum: 0,
+            count: 0
+          };
+        }
+
         acc[label].sum += Number(row[valueKey]) || 0;
         acc[label].count += 1;
+
         return acc;
       }, {});
 
       return Object.fromEntries(
-        Object.entries(temp).map(([label, item]) => [
-          label,
-          item.count ? item.sum / item.count : 0
-        ])
+        Object.entries(grouped).map(([label, item]) => {
+          return [
+            label,
+            item.count ? item.sum / item.count : 0
+          ];
+        })
       );
     }
 
-    function objectToSortedSeries(obj, limit = null) {
+    function objectToSortedSeries(obj) {
       const entries = Object.entries(obj)
         .sort((a, b) => String(a[0]).localeCompare(String(b[0]), "es", { numeric: true }));
 
-      const finalEntries = limit ? entries.slice(0, limit) : entries;
-
       return {
-        labels: finalEntries.map(entry => entry[0]),
-        values: finalEntries.map(entry => entry[1])
+        labels: entries.map(entry => entry[0]),
+        values: entries.map(entry => entry[1])
       };
     }
 
@@ -1299,8 +1382,7 @@
 
     /*
       =========================================================
-      CONSTRUCCIÓN DE GRÁFICOS EN CANVAS
-      Sin frameworks ni librerías externas.
+      RENDERIZADO GENERAL DE GRÁFICOS
       =========================================================
     */
     function renderCharts() {
@@ -1309,9 +1391,14 @@
       renderYearChart(data);
       renderGenderSalaryChart(data);
       renderInstitutionChart(data);
-      renderPositionChart(data);
+      renderIncomeLineChart(data);
     }
 
+    /*
+      =========================================================
+      GRÁFICO 1: TOTAL PAGADO POR GESTIÓN
+      =========================================================
+    */
     function renderYearChart(data) {
       const grouped = groupSum(data, "gestion", "Total_Pago");
       const series = objectToSortedSeries(grouped);
@@ -1330,20 +1417,27 @@
       });
     }
 
+    /*
+      =========================================================
+      GRÁFICO 2: BARRAS COMPARATIVAS SALARIO HOMBRES/MUJERES
+      =========================================================
+    */
     function renderGenderSalaryChart(data) {
-      const menAvg = objectToSortedSeries(groupAverage(data, "gestion", "Salario_Hombres"));
-      const womenAvgObj = groupAverage(data, "gestion", "Salario_Mujeres");
+      const labels = uniqueSorted(data.map(row => row.gestion));
 
-      const labels = menAvg.labels;
-      const womenValues = labels.map(label => womenAvgObj[label] || 0);
+      const menAverage = groupAverage(data, "gestion", "Salario_Hombres");
+      const womenAverage = groupAverage(data, "gestion", "Salario_Mujeres");
+
+      const menValues = labels.map(label => menAverage[label] || 0);
+      const womenValues = labels.map(label => womenAverage[label] || 0);
 
       drawBarChart(el.genderSalaryChart, {
         labels,
         datasets: [
           {
             name: "Salario hombres",
-            values: menAvg.values,
-            color: "#1d4ed8"
+            values: menValues,
+            color: "#2563eb"
           },
           {
             name: "Salario mujeres",
@@ -1356,6 +1450,11 @@
       });
     }
 
+    /*
+      =========================================================
+      GRÁFICO 3: DISTRIBUCIÓN POR INSTITUCIÓN
+      =========================================================
+    */
     function renderInstitutionChart(data) {
       const grouped = groupSum(data, "institucion", "Total_Pago");
       const series = objectToTopSeries(grouped, 10);
@@ -1369,32 +1468,44 @@
       });
     }
 
-    function renderPositionChart(data) {
-      const hasPositionColumn = data.some(row => row.puesto && row.puesto.trim() !== "");
+    /*
+      =========================================================
+      GRÁFICO 4: LÍNEA DE INGRESOS POR GÉNERO
+      Esta gráfica reemplaza la antigua gráfica por puesto/cargo.
+      =========================================================
+    */
+    function renderIncomeLineChart(data) {
+      const labels = uniqueSorted(data.map(row => row.gestion));
 
-      if (!hasPositionColumn) {
-        drawEmptyCanvas(
-          el.positionChart,
-          "El CSV actual no contiene columna de puesto, cargo, plaza o position."
-        );
-        return;
-      }
+      const menAverage = groupAverage(data, "gestion", "Salario_Hombres");
+      const womenAverage = groupAverage(data, "gestion", "Salario_Mujeres");
 
-      const grouped = groupSum(data, "puesto", "Total_Pago");
-      const series = objectToTopSeries(grouped, 10);
+      const menValues = labels.map(label => menAverage[label] || 0);
+      const womenValues = labels.map(label => womenAverage[label] || 0);
 
-      drawHorizontalBarChart(el.positionChart, {
-        labels: series.labels,
-        values: series.values,
-        color: "#b91c1c",
+      drawLineChart(el.incomeLineChart, {
+        labels,
+        datasets: [
+          {
+            name: "Hombres",
+            values: menValues,
+            color: "#2563eb"
+          },
+          {
+            name: "Mujeres",
+            values: womenValues,
+            color: "#d4af37"
+          }
+        ],
         money: true,
-        emptyMessage: "No hay datos por puesto o cargo."
+        emptyMessage: "No hay datos suficientes para comparar ingresos por género."
       });
     }
 
     /*
       =========================================================
-      MOTOR SIMPLE DE GRÁFICAS
+      MOTOR DE GRÁFICOS EN CANVAS
+      Sin frameworks ni librerías externas.
       =========================================================
     */
     function setupCanvas(canvas) {
@@ -1426,7 +1537,15 @@
       ctx.font = "15px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      wrapText(ctx, message, width / 2, height / 2, Math.min(width - 50, 520), 22);
+
+      wrapText(
+        ctx,
+        message,
+        width / 2,
+        height / 2,
+        Math.min(width - 50, 520),
+        22
+      );
     }
 
     function drawBarChart(canvas, options) {
@@ -1442,10 +1561,10 @@
       }
 
       const padding = {
-        top: 34,
+        top: 36,
         right: 24,
         bottom: 72,
-        left: 74
+        left: 78
       };
 
       const chartWidth = width - padding.left - padding.right;
@@ -1465,14 +1584,26 @@
         datasets.forEach((dataset, datasetIndex) => {
           const value = dataset.values[labelIndex] || 0;
           const barHeight = (value / niceMax) * chartHeight;
-          const x = padding.left + labelIndex * groupWidth + 9 + datasetIndex * (barWidth + barGap);
-          const y = padding.top + chartHeight - barHeight;
+
+          const x =
+            padding.left +
+            labelIndex * groupWidth +
+            9 +
+            datasetIndex * (barWidth + barGap);
+
+          const y =
+            padding.top +
+            chartHeight -
+            barHeight;
 
           roundRect(ctx, x, y, barWidth, barHeight, 7, dataset.color);
         });
 
         ctx.save();
-        ctx.translate(padding.left + labelIndex * groupWidth + groupWidth / 2, height - 34);
+        ctx.translate(
+          padding.left + labelIndex * groupWidth + groupWidth / 2,
+          height - 34
+        );
         ctx.rotate(-Math.PI / 5);
         ctx.fillStyle = "#4b5563";
         ctx.font = "12px Arial";
@@ -1498,13 +1629,14 @@
 
       const padding = {
         top: 24,
-        right: 34,
+        right: 42,
         bottom: 36,
-        left: Math.min(230, Math.max(120, width * 0.34))
+        left: Math.min(250, Math.max(130, width * 0.38))
       };
 
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
+
       const maxValue = Math.max(...values, 1) * 1.12;
       const rowHeight = chartHeight / labels.length;
       const barHeight = Math.max(12, Math.min(28, rowHeight * 0.58));
@@ -1519,22 +1651,178 @@
       labels.forEach((label, index) => {
         const value = values[index] || 0;
         const barWidth = (value / maxValue) * chartWidth;
-        const y = padding.top + index * rowHeight + (rowHeight - barHeight) / 2;
+
+        const y =
+          padding.top +
+          index * rowHeight +
+          (rowHeight - barHeight) / 2;
 
         ctx.fillStyle = "#374151";
         ctx.font = "12px Arial";
         ctx.textAlign = "right";
         ctx.textBaseline = "middle";
-        ctx.fillText(truncateLabel(label, 28), padding.left - 10, y + barHeight / 2);
+        ctx.fillText(
+          truncateLabel(label, 30),
+          padding.left - 10,
+          y + barHeight / 2
+        );
 
-        roundRect(ctx, padding.left, y, barWidth, barHeight, 7, options.color || "#d4af37");
+        roundRect(
+          ctx,
+          padding.left,
+          y,
+          barWidth,
+          barHeight,
+          7,
+          options.color || "#d4af37"
+        );
 
         ctx.fillStyle = "#4b5563";
         ctx.font = "11px Arial";
         ctx.textAlign = "left";
-        const valueText = options.money ? compactCurrency(value) : compactNumber(value);
-        ctx.fillText(valueText, padding.left + barWidth + 6, y + barHeight / 2);
+
+        const valueText = options.money
+          ? compactCurrency(value)
+          : compactNumber(value);
+
+        ctx.fillText(
+          valueText,
+          padding.left + barWidth + 6,
+          y + barHeight / 2
+        );
       });
+    }
+
+    function drawLineChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      const labels = options.labels || [];
+      const datasets = options.datasets || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !datasets.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 42,
+        right: 34,
+        bottom: 68,
+        left: 82
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const allValues = datasets.flatMap(dataset => dataset.values);
+      const maxValue = Math.max(...allValues, 1) * 1.15;
+
+      /* Fondo */
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      /* Rejilla horizontal y valores */
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y =
+          padding.top +
+          chartHeight -
+          (chartHeight * i / 5);
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+
+        const value = (maxValue * i) / 5;
+
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "11px Arial";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+          options.money ? compactCurrency(value) : compactNumber(value),
+          padding.left - 10,
+          y
+        );
+      }
+
+      /* Eje X */
+      labels.forEach((label, index) => {
+        const x =
+          padding.left +
+          (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        ctx.fillText(
+          truncateLabel(label, 12),
+          x,
+          height - 42
+        );
+      });
+
+      /* Líneas */
+      datasets.forEach(dataset => {
+        ctx.beginPath();
+
+        dataset.values.forEach((value, index) => {
+          const x =
+            padding.left +
+            (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+          const y =
+            padding.top +
+            chartHeight -
+            (value / maxValue) * chartHeight;
+
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+
+        ctx.strokeStyle = dataset.color;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        /* Puntos de la línea */
+        dataset.values.forEach((value, index) => {
+          const x =
+            padding.left +
+            (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+          const y =
+            padding.top +
+            chartHeight -
+            (value / maxValue) * chartHeight;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = dataset.color;
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(x, y, 7, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(17, 24, 39, 0.12)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      });
+
+      /* Leyenda */
+      drawLegend(ctx, datasets, padding.left, 14);
     }
 
     function drawGrid(ctx, padding, chartWidth, chartHeight, maxValue, money) {
@@ -1548,14 +1836,22 @@
 
       for (let i = 0; i <= steps; i++) {
         const value = (maxValue / steps) * i;
-        const y = padding.top + chartHeight - (i / steps) * chartHeight;
+
+        const y =
+          padding.top +
+          chartHeight -
+          (i / steps) * chartHeight;
 
         ctx.beginPath();
         ctx.moveTo(padding.left, y);
         ctx.lineTo(padding.left + chartWidth, y);
         ctx.stroke();
 
-        ctx.fillText(money ? compactCurrency(value) : compactNumber(value), padding.left - 8, y);
+        ctx.fillText(
+          money ? compactCurrency(value) : compactNumber(value),
+          padding.left - 8,
+          y
+        );
       }
     }
 
@@ -1572,7 +1868,7 @@
         ctx.textBaseline = "top";
         ctx.fillText(dataset.name, currentX + 18, y);
 
-        currentX += ctx.measureText(dataset.name).width + 44;
+        currentX += ctx.measureText(dataset.name).width + 48;
       });
     }
 
@@ -1586,27 +1882,16 @@
       ctx.arcTo(x, y + height, x, y, r);
       ctx.arcTo(x, y, x + width, y, r);
       ctx.closePath();
+
       ctx.fillStyle = color;
       ctx.fill();
     }
 
-    function compactNumber(value) {
-      return new Intl.NumberFormat("es-HN", {
-        notation: "compact",
-        maximumFractionDigits: 1
-      }).format(value || 0);
-    }
-
-    function compactCurrency(value) {
-      return "L " + new Intl.NumberFormat("es-HN", {
-        notation: "compact",
-        maximumFractionDigits: 1
-      }).format(value || 0);
-    }
-
     function truncateLabel(label, maxLength) {
       const text = String(label || "");
-      return text.length > maxLength ? text.slice(0, maxLength - 1) + "…" : text;
+      return text.length > maxLength
+        ? text.slice(0, maxLength - 1) + "…"
+        : text;
     }
 
     function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
@@ -1616,6 +1901,7 @@
 
       words.forEach(word => {
         const testLine = line + word + " ";
+
         if (ctx.measureText(testLine).width > maxWidth && line) {
           lines.push(line.trim());
           line = word + " ";
@@ -1626,7 +1912,9 @@
 
       lines.push(line.trim());
 
-      const startY = y - ((lines.length - 1) * lineHeight) / 2;
+      const startY =
+        y - ((lines.length - 1) * lineHeight) / 2;
+
       lines.forEach((item, index) => {
         ctx.fillText(item, x, startY + index * lineHeight);
       });
@@ -1634,7 +1922,7 @@
 
     /*
       =========================================================
-      UTILIDADES DE ESTADO Y SEGURIDAD VISUAL
+      ESTADOS VISUALES
       =========================================================
     */
     function showLoading(isLoading) {
@@ -1645,6 +1933,10 @@
       el.errorMessage.textContent = message;
       el.errorState.classList.remove("hidden");
       el.lastUpdate.textContent = "Error al conectar";
+    }
+
+    function hideError() {
+      el.errorState.classList.add("hidden");
     }
 
     function escapeHTML(value) {
@@ -1676,6 +1968,7 @@
     el.institutionFilter.addEventListener("change", event => {
       state.selectedInstitution = event.target.value;
       state.selectedGestion = "";
+
       el.gestionFilter.value = "";
 
       if (state.selectedInstitution) {
@@ -1707,8 +2000,8 @@
     }
 
     /*
-      Redibuja gráficos al cambiar el tamaño de la pantalla.
-      Esto mantiene el diseño responsive en escritorio, tablet y móvil.
+      Redibuja los gráficos cuando cambia el tamaño de pantalla.
+      Esto mejora la visualización en escritorio, tablet y móvil.
     */
     window.addEventListener("resize", debounce(() => {
       renderCharts();
@@ -1716,6 +2009,7 @@
 
     function debounce(callback, delay) {
       let timer;
+
       return function () {
         clearTimeout(timer);
         timer = setTimeout(callback, delay);
@@ -1724,7 +2018,7 @@
 
     /*
       =========================================================
-      INICIALIZACIÓN
+      INICIALIZACIÓN DEL PORTAL
       =========================================================
     */
     loadData();
