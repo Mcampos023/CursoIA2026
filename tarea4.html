@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Estadístico | Gestión Financiera Estatal en Salarios</title>
+
+  <style>
+    /* =========================================================
+       ZONA PERSONALIZABLE: VARIABLES DE DISEÑO
+       Puedes ajustar colores, sombras, bordes y tipografías aquí.
+    ========================================================= */
+    :root {
+      --black: #050505;
+      --black-soft: #111827;
+      --gold: #d4af37;
+      --gold-light: #f5d76e;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --green: #0f766e;
+      --blue: #1d4ed8;
+      --purple: #7c3aed;
+      --red: #b91c1c;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(212, 175, 55, 0.16), transparent 28%),
+        linear-gradient(135deg, #f7f7f7, #eef2f7);
+      color: var(--text);
+    }
+
+    /* =========================================================
+       ENCABEZADO PRINCIPAL
+    ========================================================= */
+    header {
+      background: linear-gradient(135deg, #000000, #151515);
+      color: white;
+      padding: 24px 28px;
+      border-bottom: 4px solid var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .header-content {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      color: var(--gold);
+      font-size: clamp(1.35rem, 2.8vw, 2.25rem);
+      letter-spacing: 0.4px;
+      line-height: 1.15;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #d1d5db;
+      font-size: 0.98rem;
+    }
+
+    .header-badge {
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      color: var(--gold-light);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    /* =========================================================
+       LAYOUT GENERAL
+    ========================================================= */
+    .app {
+      max-width: 1500px;
+      margin: 22px auto;
+      padding: 0 18px 28px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 22px;
+    }
+
+    aside,
+    main {
+      min-width: 0;
+    }
+
+    .sidebar {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: sticky;
+      top: 112px;
+      max-height: calc(100vh - 134px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 18px;
+      background: linear-gradient(135deg, #111827, #000000);
+      color: white;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--gold-light);
+    }
+
+    .sidebar-header small {
+      display: block;
+      margin-top: 5px;
+      color: #d1d5db;
+    }
+
+    .sidebar-tools {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    input,
+    select,
+    button {
+      font-family: inherit;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--black-soft);
+      color: white;
+      font-weight: bold;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #b8860b);
+      color: #111;
+    }
+
+    .institution-list {
+      overflow: auto;
+      padding: 10px;
+    }
+
+    .institution-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .institution-button {
+      width: 100%;
+      border: none;
+      background: #fff;
+      text-align: left;
+      padding: 13px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .institution-button:hover {
+      background: #f9fafb;
+    }
+
+    .institution-button.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-left: 5px solid var(--gold);
+    }
+
+    .institution-name {
+      font-weight: bold;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .institution-meta {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+
+    .toggle-symbol {
+      font-weight: bold;
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .years {
+      display: none;
+      padding: 0 12px 12px;
+      background: #fafafa;
+      border-top: 1px solid var(--line);
+    }
+
+    .years.open {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding-top: 12px;
+    }
+
+    .year-chip {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .year-chip:hover,
+    .year-chip.active {
+      background: var(--black-soft);
+      color: var(--gold-light);
+      border-color: var(--black-soft);
+    }
+
+    /* =========================================================
+       CONTENIDO PRINCIPAL
+    ========================================================= */
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 12px;
+      color: #111827;
+    }
+
+    .panel-subtitle {
+      margin: -6px 0 14px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-weight: bold;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Indicadores rápidos */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      background:
+        linear-gradient(135deg, rgba(212, 175, 55, 0.12), transparent),
+        #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 126px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      right: -24px;
+      bottom: -24px;
+      background: rgba(212, 175, 55, 0.18);
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: bold;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 10px;
+      font-size: clamp(1.25rem, 2vw, 1.9rem);
+      color: #111827;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .kpi small {
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .chart-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-card h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .chart-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      min-height: 260px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Tabla */
+    .table-tools {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      background: white;
+    }
+
+    thead {
+      background: #111827;
+      color: var(--gold-light);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .status {
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px dashed var(--line);
+      background: #fff;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .loader {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid #e5e7eb;
+      border-top-color: var(--gold);
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 8px;
+      padding-bottom: 16px;
+    }
+
+    /* =========================================================
+       RESPONSIVE: TABLET Y MÓVIL
+    ========================================================= */
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+      }
+
+      .institution-list {
+        max-height: 360px;
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 20px 16px;
+      }
+
+      .app {
+        padding: 0 12px 22px;
+        margin-top: 14px;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel,
+      .chart-card {
+        padding: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================================================
+       ENCABEZADO NEGRO CON TÍTULO DORADO
+  ========================================================= -->
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <h1>Gestion Financiera estatal en Salarios</h1>
+        <p>Portal Estadístico sobre género, remuneraciones y acceso a oportunidades</p>
+      </div>
+      <div class="header-badge" id="lastUpdate">Conectando con Google Sheets...</div>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- =========================================================
+         PANEL LATERAL POR INSTITUCIÓN
+    ========================================================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Instituciones</h2>
+        <small>Expandir para ver gestiones o años disponibles</small>
+      </div>
+
+      <div class="sidebar-tools">
+        <input
+          id="sideSearch"
+          class="input"
+          type="search"
+          placeholder="Buscar institución..."
+          autocomplete="off"
+        />
+        <button id="clearSelectionBtn" class="btn btn-gold" type="button">
+          Ver todas las instituciones
+        </button>
+      </div>
+
+      <div id="institutionList" class="institution-list">
+        <div class="status">
+          <div class="loader"></div>
+          <span>Cargando instituciones...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =========================================================
+         CONTENIDO PRINCIPAL
+    ========================================================= -->
+    <main class="content">
+      <section id="loadingState" class="status">
+        <div class="loader"></div>
+        <div>
+          <strong>Cargando datos reales desde Google Sheets.</strong><br />
+          <span>El portal está obteniendo y procesando el CSV publicado.</span>
+        </div>
+      </section>
+
+      <section id="errorState" class="status hidden">
+        <div>⚠️</div>
+        <div>
+          <strong>No fue posible cargar los datos.</strong><br />
+          <span id="errorMessage">Revise la conexión o que el CSV esté publicado correctamente.</span>
+        </div>
+      </section>
+
+      <section id="emptyState" class="status hidden">
+        <div>🔎</div>
+        <div>
+          <strong>No hay registros para los filtros aplicados.</strong><br />
+          <span>Intente cambiar la institución, gestión o texto de búsqueda.</span>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           FILTROS PRINCIPALES
+      ========================================================= -->
+      <section class="panel">
+        <h2>Panel de análisis</h2>
+        <p class="panel-subtitle">
+          Filtre por institución, gestión o busque registros específicos. Los indicadores y gráficos se actualizan automáticamente.
+        </p>
+
+        <div class="filters">
+          <div class="field">
+            <label for="globalSearch">Buscador por nombre de institución</label>
+            <input
+              id="globalSearch"
+              class="input"
+              type="search"
+              placeholder="Ejemplo: Secretaría, Municipalidad, Instituto..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="field">
+            <label for="institutionFilter">Filtro por institución</label>
+            <select id="institutionFilter" class="select">
+              <option value="">Todas las instituciones</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="gestionFilter">Filtro por gestión</label>
+            <select id="gestionFilter" class="select">
+              <option value="">Todas las gestiones</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="resetBtn" class="btn" type="button">Limpiar filtros</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           INDICADORES RÁPIDOS
+      ========================================================= -->
+      <section class="kpis">
+        <article class="kpi">
+          <span>Instituciones</span>
+          <strong id="kpiInstitutions">0</strong>
+          <small>Según registros visibles</small>
+        </article>
+
+        <article class="kpi">
+          <span>Gestiones</span>
+          <strong id="kpiGestiones">0</strong>
+          <small>Años o periodos encontrados</small>
+        </article>
+
+        <article class="kpi">
+          <span>Total empleados</span>
+          <strong id="kpiEmployees">0</strong>
+          <small>Hombres y mujeres reportados</small>
+        </article>
+
+        <article class="kpi">
+          <span>Total pagado</span>
+          <strong id="kpiPaid">L 0.00</strong>
+          <small>Pago total en salarios</small>
+        </article>
+      </section>
+
+      <!-- =========================================================
+           GRÁFICOS
+      ========================================================= -->
+      <section class="charts-grid">
+        <article class="chart-card">
+          <h3>Gráfica por año / gestión</h3>
+          <p>Total pagado en salarios por gestión, según los filtros aplicados.</p>
+          <div class="chart-wrap">
+            <canvas id="yearChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Salario por género y año</h3>
+          <p>Comparativo de salario de hombres y mujeres por gestión.</p>
+          <div class="chart-wrap">
+            <canvas id="genderSalaryChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Distribución por institución</h3>
+          <p>Participación institucional según total pagado en salarios.</p>
+          <div class="chart-wrap">
+            <canvas id="institutionChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Gráfica por puesto / cargo</h3>
+          <p>Se activa si el CSV contiene una columna llamada puesto, cargo, plaza o position.</p>
+          <div class="chart-wrap">
+            <canvas id="positionChart"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <!-- =========================================================
+           TABLA DINÁMICA
+      ========================================================= -->
+      <section class="panel">
+        <div class="table-tools">
+          <div>
+            <h2>Tabla dinámica de registros</h2>
+            <p class="panel-subtitle" id="recordCount">0 registros visibles</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Institución</th>
+                <th>Gestión</th>
+                <th class="text-right">Hombres</th>
+                <th class="text-right">Mujeres</th>
+                <th class="text-right">Salario hombres</th>
+                <th class="text-right">Salario mujeres</th>
+                <th class="text-right">Total empleados</th>
+                <th class="text-right">Total pagado</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable">
+              <tr>
+                <td colspan="8" class="muted">Cargando datos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        Portal generado con HTML, CSS y JavaScript puro. Datos conectados dinámicamente desde Google Sheets.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    /*
+      =========================================================
+      CONEXIÓN CON GOOGLE SHEETS
+      El enlace debe estar publicado como CSV.
+      No se utilizan datos simulados.
+      =========================================================
+    */
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvTGseuuSL9372M51QPZg2f1SOGVMeBWUiiwyz2bImUxwDU3_w6FKJ3sx8k4v1AUVL-HvXpInU1Hh4/pub?gid=1375287430&single=true&output=csv";
+
+    /*
+      =========================================================
+      ESTADO GLOBAL DEL PORTAL
+      =========================================================
+    */
+    const state = {
+      rawData: [],
+      filteredData: [],
+      selectedInstitution: "",
+      selectedGestion: "",
+      searchText: "",
+      expandedInstitutions: new Set()
+    };
+
+    /*
+      =========================================================
+      REFERENCIAS AL DOM
+      =========================================================
+    */
+    const el = {
+      lastUpdate: document.getElementById("lastUpdate"),
+      loadingState: document.getElementById("loadingState"),
+      errorState: document.getElementById("errorState"),
+      emptyState: document.getElementById("emptyState"),
+      errorMessage: document.getElementById("errorMessage"),
+
+      sideSearch: document.getElementById("sideSearch"),
+      globalSearch: document.getElementById("globalSearch"),
+      institutionFilter: document.getElementById("institutionFilter"),
+      gestionFilter: document.getElementById("gestionFilter"),
+      resetBtn: document.getElementById("resetBtn"),
+      clearSelectionBtn: document.getElementById("clearSelectionBtn"),
+
+      institutionList: document.getElementById("institutionList"),
+      dataTable: document.getElementById("dataTable"),
+      recordCount: document.getElementById("recordCount"),
+
+      kpiInstitutions: document.getElementById("kpiInstitutions"),
+      kpiGestiones: document.getElementById("kpiGestiones"),
+      kpiEmployees: document.getElementById("kpiEmployees"),
+      kpiPaid: document.getElementById("kpiPaid"),
+
+      yearChart: document.getElementById("yearChart"),
+      genderSalaryChart: document.getElementById("genderSalaryChart"),
+      institutionChart: document.getElementById("institutionChart"),
+      positionChart: document.getElementById("positionChart")
+    };
+
+    /*
+      =========================================================
+      FORMATEO DE NÚMEROS Y MONEDA
+      =========================================================
+    */
+    const numberFormatter = new Intl.NumberFormat("es-HN", {
+      maximumFractionDigits: 0
+    });
+
+    const currencyFormatter = new Intl.NumberFormat("es-HN", {
+      style: "currency",
+      currency: "HNL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function formatNumber(value) {
+      return numberFormatter.format(value || 0);
+    }
+
+    function formatCurrency(value) {
+      return currencyFormatter.format(value || 0);
+    }
+
+    /*
+      =========================================================
+      PROCESAMIENTO DE CSV
+      Parser compatible con separador punto y coma o coma.
+      También respeta comillas dobles.
+      =========================================================
+    */
+    function detectDelimiter(firstLine) {
+      const semicolons = (firstLine.match(/;/g) || []).length;
+      const commas = (firstLine.match(/,/g) || []).length;
+      return semicolons >= commas ? ";" : ",";
+    }
+
+    function parseCSVLine(line, delimiter) {
+      const values = [];
+      let current = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+
+        if (char === '"' && insideQuotes && nextChar === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === delimiter && !insideQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      values.push(current.trim());
+      return values.map(value => value.replace(/^"|"$/g, ""));
+    }
+
+    function parseCSV(text) {
+      const cleanText = text.replace(/\r/g, "").trim();
+
+      if (!cleanText) {
+        return [];
+      }
+
+      const lines = cleanText.split("\n").filter(line => line.trim() !== "");
+      const delimiter = detectDelimiter(lines[0]);
+      const headers = parseCSVLine(lines[0], delimiter).map(h => h.trim());
+
+      return lines.slice(1).map(line => {
+        const values = parseCSVLine(line, delimiter);
+        const row = {};
+
+        headers.forEach((header, index) => {
+          row[header] = values[index] ?? "";
+        });
+
+        return normalizeRow(row);
+      });
+    }
+
+    /*
+      =========================================================
+      NORMALIZACIÓN DE REGISTROS
+      Convierte textos numéricos a números reales.
+      =========================================================
+    */
+    function toNumber(value) {
+      if (value === null || value === undefined) return 0;
+
+      const cleaned = String(value)
+        .replace(/L/gi, "")
+        .replace(/HNL/gi, "")
+        .replace(/\s/g, "")
+        .replace(/,/g, "")
+        .replace(/[^\d.-]/g, "");
+
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function normalizeRow(row) {
+      return {
+        institucion: String(row.institucion ?? row.Institucion ?? row.INSTITUCION ?? "").trim(),
+        gestion: String(row.gestion ?? row.Gestion ?? row.GESTION ?? "").trim(),
+        Hombres: toNumber(row.Hombres ?? row.hombres),
+        Mujeres: toNumber(row.Mujeres ?? row.mujeres),
+        Salario_Hombres: toNumber(row.Salario_Hombres ?? row.salario_hombres),
+        Salario_Mujeres: toNumber(row.Salario_Mujeres ?? row.salario_mujeres),
+        Total_Empleados: toNumber(row.Total_Empleados ?? row.total_empleados),
+        Total_Pago: toNumber(row.Total_Pago ?? row.total_pago),
+
+        /*
+          Zona flexible:
+          Si más adelante se añade una columna de puesto, cargo o plaza,
+          el gráfico por puesto se activará automáticamente.
+        */
+        puesto: String(
+          row.puesto ??
+          row.Puesto ??
+          row.cargo ??
+          row.Cargo ??
+          row.plaza ??
+          row.Plaza ??
+          row.position ??
+          row.Position ??
+          ""
+        ).trim(),
+
+        original: row
+      };
+    }
+
+    /*
+      =========================================================
+      CARGA DE DATOS CON FETCH()
+      =========================================================
+    */
+    async function loadData() {
+      try {
+        showLoading(true);
+
+        const response = await fetch(CSV_URL, {
+          method: "GET",
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("Respuesta no válida del servidor: " + response.status);
+        }
+
+        const csvText = await response.text();
+        const parsedData = parseCSV(csvText).filter(row => row.institucion && row.gestion);
+
+        if (!parsedData.length) {
+          throw new Error("El CSV no contiene registros válidos con institución y gestión.");
+        }
+
+        state.rawData = parsedData;
+        state.filteredData = parsedData;
+
+        el.lastUpdate.textContent = "Datos cargados: " + new Date().toLocaleString("es-HN");
+
+        buildFilters();
+        applyFilters();
+        showLoading(false);
+      } catch (error) {
+        console.error(error);
+        showLoading(false);
+        showError(error.message || "Error desconocido al cargar el CSV.");
+      }
+    }
+
+    /*
+      =========================================================
+      CONSTRUCCIÓN DE FILTROS
+      =========================================================
+    */
+    function uniqueSorted(values) {
+      return [...new Set(values.filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), "es", { numeric: true }));
+    }
+
+    function buildFilters() {
+      const institutions = uniqueSorted(state.rawData.map(row => row.institucion));
+      const gestiones = uniqueSorted(state.rawData.map(row => row.gestion));
+
+      el.institutionFilter.innerHTML = '<option value="">Todas las instituciones</option>';
+      institutions.forEach(institution => {
+        const option = document.createElement("option");
+        option.value = institution;
+        option.textContent = institution;
+        el.institutionFilter.appendChild(option);
+      });
+
+      el.gestionFilter.innerHTML = '<option value="">Todas las gestiones</option>';
+      gestiones.forEach(gestion => {
+        const option = document.createElement("option");
+        option.value = gestion;
+        option.textContent = gestion;
+        el.gestionFilter.appendChild(option);
+      });
+    }
+
+    /*
+      =========================================================
+      APLICACIÓN DE FILTROS, BUSCADOR Y ESTADOS VACÍOS
+      =========================================================
+    */
+    function applyFilters() {
+      const search = state.searchText.toLowerCase().trim();
+
+      state.filteredData = state.rawData.filter(row => {
+        const matchesInstitutionFilter =
+          !state.selectedInstitution || row.institucion === state.selectedInstitution;
+
+        const matchesGestionFilter =
+          !state.selectedGestion || row.gestion === state.selectedGestion;
+
+        const matchesSearch =
+          !search || row.institucion.toLowerCase().includes(search);
+
+        return matchesInstitutionFilter && matchesGestionFilter && matchesSearch;
+      });
+
+      el.emptyState.classList.toggle("hidden", state.filteredData.length > 0);
+
+      renderSidebar();
+      renderKPIs();
+      renderTable();
+      renderCharts();
+    }
+
+    /*
+      =========================================================
+      PANEL LATERAL: INSTITUCIONES EXPANDIBLES
+      =========================================================
+    */
+    function renderSidebar() {
+      const sideSearch = el.sideSearch.value.toLowerCase().trim();
+      const institutions = uniqueSorted(
+        state.rawData
+          .map(row => row.institucion)
+          .filter(name => !sideSearch || name.toLowerCase().includes(sideSearch))
+      );
+
+      if (!institutions.length) {
+        el.institutionList.innerHTML = `
+          <div class="status">
+            <span>🔎</span>
+            <span>No se encontraron instituciones.</span>
+          </div>
+        `;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      institutions.forEach(institution => {
+        const rows = state.rawData.filter(row => row.institucion === institution);
+        const years = uniqueSorted(rows.map(row => row.gestion));
+        const totalPaid = rows.reduce((sum, row) => sum + row.Total_Pago, 0);
+        const isExpanded = state.expandedInstitutions.has(institution);
+        const isActive = state.selectedInstitution === institution;
+
+        const item = document.createElement("div");
+        item.className = "institution-item";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "institution-button" + (isActive ? " active" : "");
+        button.innerHTML = `
+          <div>
+            <div class="institution-name">${escapeHTML(institution)}</div>
+            <div class="institution-meta">
+              ${years.length} gestión(es) · ${formatCurrency(totalPaid)}
+            </div>
+          </div>
+          <div class="toggle-symbol">${isExpanded ? "−" : "+"}</div>
+        `;
+
+        button.addEventListener("click", () => {
+          state.selectedInstitution = institution;
+          state.selectedGestion = "";
+          el.institutionFilter.value = institution;
+          el.gestionFilter.value = "";
+
+          if (state.expandedInstitutions.has(institution)) {
+            state.expandedInstitutions.delete(institution);
+          } else {
+            state.expandedInstitutions.add(institution);
+          }
+
+          applyFilters();
+        });
+
+        const yearsBox = document.createElement("div");
+        yearsBox.className = "years" + (isExpanded ? " open" : "");
+
+        years.forEach(year => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "year-chip" + (
+            state.selectedInstitution === institution && state.selectedGestion === year
+              ? " active"
+              : ""
+          );
+          chip.textContent = year;
+
+          chip.addEventListener("click", event => {
+            event.stopPropagation();
+            state.selectedInstitution = institution;
+            state.selectedGestion = year;
+            el.institutionFilter.value = institution;
+            el.gestionFilter.value = year;
+            state.expandedInstitutions.add(institution);
+            applyFilters();
+          });
+
+          yearsBox.appendChild(chip);
+        });
+
+        item.appendChild(button);
+        item.appendChild(yearsBox);
+        fragment.appendChild(item);
+      });
+
+      el.institutionList.innerHTML = "";
+      el.institutionList.appendChild(fragment);
+    }
+
+    /*
+      =========================================================
+      INDICADORES RÁPIDOS
+      =========================================================
+    */
+    function renderKPIs() {
+      const data = state.filteredData;
+
+      const institutions = uniqueSorted(data.map(row => row.institucion)).length;
+      const gestiones = uniqueSorted(data.map(row => row.gestion)).length;
+      const employees = data.reduce((sum, row) => sum + row.Total_Empleados, 0);
+      const paid = data.reduce((sum, row) => sum + row.Total_Pago, 0);
+
+      el.kpiInstitutions.textContent = formatNumber(institutions);
+      el.kpiGestiones.textContent = formatNumber(gestiones);
+      el.kpiEmployees.textContent = formatNumber(employees);
+      el.kpiPaid.textContent = formatCurrency(paid);
+    }
+
+    /*
+      =========================================================
+      TABLA DINÁMICA DE REGISTROS
+      =========================================================
+    */
+    function renderTable() {
+      const data = state.filteredData;
+
+      el.recordCount.textContent = `${formatNumber(data.length)} registro(s) visible(s)`;
+
+      if (!data.length) {
+        el.dataTable.innerHTML = `
+          <tr>
+            <td colspan="8" class="muted">No hay registros para mostrar.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      el.dataTable.innerHTML = data.map(row => `
+        <tr>
+          <td>${escapeHTML(row.institucion)}</td>
+          <td>${escapeHTML(row.gestion)}</td>
+          <td class="text-right">${formatNumber(row.Hombres)}</td>
+          <td class="text-right">${formatNumber(row.Mujeres)}</td>
+          <td class="text-right">${formatCurrency(row.Salario_Hombres)}</td>
+          <td class="text-right">${formatCurrency(row.Salario_Mujeres)}</td>
+          <td class="text-right">${formatNumber(row.Total_Empleados)}</td>
+          <td class="text-right">${formatCurrency(row.Total_Pago)}</td>
+        </tr>
+      `).join("");
+    }
+
+    /*
+      =========================================================
+      AGRUPACIÓN DE DATOS PARA GRÁFICOS
+      =========================================================
+    */
+    function groupSum(data, key, valueKey) {
+      return data.reduce((acc, row) => {
+        const label = row[key] || "Sin dato";
+        acc[label] = (acc[label] || 0) + (Number(row[valueKey]) || 0);
+        return acc;
+      }, {});
+    }
+
+    function groupAverage(data, key, valueKey) {
+      const temp = data.reduce((acc, row) => {
+        const label = row[key] || "Sin dato";
+        if (!acc[label]) acc[label] = { sum: 0, count: 0 };
+        acc[label].sum += Number(row[valueKey]) || 0;
+        acc[label].count += 1;
+        return acc;
+      }, {});
+
+      return Object.fromEntries(
+        Object.entries(temp).map(([label, item]) => [
+          label,
+          item.count ? item.sum / item.count : 0
+        ])
+      );
+    }
+
+    function objectToSortedSeries(obj, limit = null) {
+      const entries = Object.entries(obj)
+        .sort((a, b) => String(a[0]).localeCompare(String(b[0]), "es", { numeric: true }));
+
+      const finalEntries = limit ? entries.slice(0, limit) : entries;
+
+      return {
+        labels: finalEntries.map(entry => entry[0]),
+        values: finalEntries.map(entry => entry[1])
+      };
+    }
+
+    function objectToTopSeries(obj, limit = 10) {
+      const entries = Object.entries(obj)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit);
+
+      return {
+        labels: entries.map(entry => entry[0]),
+        values: entries.map(entry => entry[1])
+      };
+    }
+
+    /*
+      =========================================================
+      CONSTRUCCIÓN DE GRÁFICOS EN CANVAS
+      Sin frameworks ni librerías externas.
+      =========================================================
+    */
+    function renderCharts() {
+      const data = state.filteredData;
+
+      renderYearChart(data);
+      renderGenderSalaryChart(data);
+      renderInstitutionChart(data);
+      renderPositionChart(data);
+    }
+
+    function renderYearChart(data) {
+      const grouped = groupSum(data, "gestion", "Total_Pago");
+      const series = objectToSortedSeries(grouped);
+
+      drawBarChart(el.yearChart, {
+        labels: series.labels,
+        datasets: [
+          {
+            name: "Total pagado",
+            values: series.values,
+            color: "#d4af37"
+          }
+        ],
+        money: true,
+        emptyMessage: "No hay datos de total pagado por gestión."
+      });
+    }
+
+    function renderGenderSalaryChart(data) {
+      const menAvg = objectToSortedSeries(groupAverage(data, "gestion", "Salario_Hombres"));
+      const womenAvgObj = groupAverage(data, "gestion", "Salario_Mujeres");
+
+      const labels = menAvg.labels;
+      const womenValues = labels.map(label => womenAvgObj[label] || 0);
+
+      drawBarChart(el.genderSalaryChart, {
+        labels,
+        datasets: [
+          {
+            name: "Salario hombres",
+            values: menAvg.values,
+            color: "#1d4ed8"
+          },
+          {
+            name: "Salario mujeres",
+            values: womenValues,
+            color: "#7c3aed"
+          }
+        ],
+        money: true,
+        emptyMessage: "No hay datos salariales por género."
+      });
+    }
+
+    function renderInstitutionChart(data) {
+      const grouped = groupSum(data, "institucion", "Total_Pago");
+      const series = objectToTopSeries(grouped, 10);
+
+      drawHorizontalBarChart(el.institutionChart, {
+        labels: series.labels,
+        values: series.values,
+        color: "#0f766e",
+        money: true,
+        emptyMessage: "No hay datos para distribución por institución."
+      });
+    }
+
+    function renderPositionChart(data) {
+      const hasPositionColumn = data.some(row => row.puesto && row.puesto.trim() !== "");
+
+      if (!hasPositionColumn) {
+        drawEmptyCanvas(
+          el.positionChart,
+          "El CSV actual no contiene columna de puesto, cargo, plaza o position."
+        );
+        return;
+      }
+
+      const grouped = groupSum(data, "puesto", "Total_Pago");
+      const series = objectToTopSeries(grouped, 10);
+
+      drawHorizontalBarChart(el.positionChart, {
+        labels: series.labels,
+        values: series.values,
+        color: "#b91c1c",
+        money: true,
+        emptyMessage: "No hay datos por puesto o cargo."
+      });
+    }
+
+    /*
+      =========================================================
+      MOTOR SIMPLE DE GRÁFICAS
+      =========================================================
+    */
+    function setupCanvas(canvas) {
+      const parent = canvas.parentElement;
+      const rect = parent.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = Math.max(320, rect.width) * dpr;
+      canvas.height = Math.max(260, rect.height) * dpr;
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      return {
+        ctx,
+        width: canvas.width / dpr,
+        height: canvas.height / dpr
+      };
+    }
+
+    function drawEmptyCanvas(canvas, message) {
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "15px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      wrapText(ctx, message, width / 2, height / 2, Math.min(width - 50, 520), 22);
+    }
+
+    function drawBarChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const labels = options.labels || [];
+      const datasets = options.datasets || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !datasets.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 34,
+        right: 24,
+        bottom: 72,
+        left: 74
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const allValues = datasets.flatMap(dataset => dataset.values);
+      const maxValue = Math.max(...allValues, 1);
+      const niceMax = maxValue * 1.15;
+
+      drawGrid(ctx, padding, chartWidth, chartHeight, niceMax, options.money);
+
+      const groupWidth = chartWidth / labels.length;
+      const barGap = 5;
+      const barWidth = Math.max(7, (groupWidth - 18) / datasets.length - barGap);
+
+      labels.forEach((label, labelIndex) => {
+        datasets.forEach((dataset, datasetIndex) => {
+          const value = dataset.values[labelIndex] || 0;
+          const barHeight = (value / niceMax) * chartHeight;
+          const x = padding.left + labelIndex * groupWidth + 9 + datasetIndex * (barWidth + barGap);
+          const y = padding.top + chartHeight - barHeight;
+
+          roundRect(ctx, x, y, barWidth, barHeight, 7, dataset.color);
+        });
+
+        ctx.save();
+        ctx.translate(padding.left + labelIndex * groupWidth + groupWidth / 2, height - 34);
+        ctx.rotate(-Math.PI / 5);
+        ctx.fillStyle = "#4b5563";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(truncateLabel(label, 16), 0, 0);
+        ctx.restore();
+      });
+
+      drawLegend(ctx, datasets, padding.left, 14);
+    }
+
+    function drawHorizontalBarChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const labels = options.labels || [];
+      const values = options.values || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !values.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 24,
+        right: 34,
+        bottom: 36,
+        left: Math.min(230, Math.max(120, width * 0.34))
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const maxValue = Math.max(...values, 1) * 1.12;
+      const rowHeight = chartHeight / labels.length;
+      const barHeight = Math.max(12, Math.min(28, rowHeight * 0.58));
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + chartHeight);
+      ctx.stroke();
+
+      labels.forEach((label, index) => {
+        const value = values[index] || 0;
+        const barWidth = (value / maxValue) * chartWidth;
+        const y = padding.top + index * rowHeight + (rowHeight - barHeight) / 2;
+
+        ctx.fillStyle = "#374151";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(truncateLabel(label, 28), padding.left - 10, y + barHeight / 2);
+
+        roundRect(ctx, padding.left, y, barWidth, barHeight, 7, options.color || "#d4af37");
+
+        ctx.fillStyle = "#4b5563";
+        ctx.font = "11px Arial";
+        ctx.textAlign = "left";
+        const valueText = options.money ? compactCurrency(value) : compactNumber(value);
+        ctx.fillText(valueText, padding.left + barWidth + 6, y + barHeight / 2);
+      });
+    }
+
+    function drawGrid(ctx, padding, chartWidth, chartHeight, maxValue, money) {
+      const steps = 4;
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "11px Arial";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= steps; i++) {
+        const value = (maxValue / steps) * i;
+        const y = padding.top + chartHeight - (i / steps) * chartHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+
+        ctx.fillText(money ? compactCurrency(value) : compactNumber(value), padding.left - 8, y);
+      }
+    }
+
+    function drawLegend(ctx, datasets, x, y) {
+      let currentX = x;
+
+      datasets.forEach(dataset => {
+        ctx.fillStyle = dataset.color;
+        roundRect(ctx, currentX, y, 13, 13, 4, dataset.color);
+
+        ctx.fillStyle = "#374151";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(dataset.name, currentX + 18, y);
+
+        currentX += ctx.measureText(dataset.name).width + 44;
+      });
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, color) {
+      const r = Math.min(radius, width / 2, height / 2);
+
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function compactNumber(value) {
+      return new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(value || 0);
+    }
+
+    function compactCurrency(value) {
+      return "L " + new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(value || 0);
+    }
+
+    function truncateLabel(label, maxLength) {
+      const text = String(label || "");
+      return text.length > maxLength ? text.slice(0, maxLength - 1) + "…" : text;
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = String(text).split(" ");
+      const lines = [];
+      let line = "";
+
+      words.forEach(word => {
+        const testLine = line + word + " ";
+        if (ctx.measureText(testLine).width > maxWidth && line) {
+          lines.push(line.trim());
+          line = word + " ";
+        } else {
+          line = testLine;
+        }
+      });
+
+      lines.push(line.trim());
+
+      const startY = y - ((lines.length - 1) * lineHeight) / 2;
+      lines.forEach((item, index) => {
+        ctx.fillText(item, x, startY + index * lineHeight);
+      });
+    }
+
+    /*
+      =========================================================
+      UTILIDADES DE ESTADO Y SEGURIDAD VISUAL
+      =========================================================
+    */
+    function showLoading(isLoading) {
+      el.loadingState.classList.toggle("hidden", !isLoading);
+    }
+
+    function showError(message) {
+      el.errorMessage.textContent = message;
+      el.errorState.classList.remove("hidden");
+      el.lastUpdate.textContent = "Error al conectar";
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /*
+      =========================================================
+      EVENTOS DE INTERACCIÓN
+      =========================================================
+    */
+    el.globalSearch.addEventListener("input", event => {
+      state.searchText = event.target.value;
+      el.sideSearch.value = event.target.value;
+      applyFilters();
+    });
+
+    el.sideSearch.addEventListener("input", event => {
+      state.searchText = event.target.value;
+      el.globalSearch.value = event.target.value;
+      applyFilters();
+    });
+
+    el.institutionFilter.addEventListener("change", event => {
+      state.selectedInstitution = event.target.value;
+      state.selectedGestion = "";
+      el.gestionFilter.value = "";
+
+      if (state.selectedInstitution) {
+        state.expandedInstitutions.add(state.selectedInstitution);
+      }
+
+      applyFilters();
+    });
+
+    el.gestionFilter.addEventListener("change", event => {
+      state.selectedGestion = event.target.value;
+      applyFilters();
+    });
+
+    el.resetBtn.addEventListener("click", resetFilters);
+    el.clearSelectionBtn.addEventListener("click", resetFilters);
+
+    function resetFilters() {
+      state.selectedInstitution = "";
+      state.selectedGestion = "";
+      state.searchText = "";
+
+      el.globalSearch.value = "";
+      el.sideSearch.value = "";
+      el.institutionFilter.value = "";
+      el.gestionFilter.value = "";
+
+      applyFilters();
+    }
+
+    /*
+      Redibuja gráficos al cambiar el tamaño de la pantalla.
+      Esto mantiene el diseño responsive en escritorio, tablet y móvil.
+    */
+    window.addEventListener("resize", debounce(() => {
+      renderCharts();
+    }, 180));
+
+    function debounce(callback, delay) {
+      let timer;
+      return function () {
+        clearTimeout(timer);
+        timer = setTimeout(callback, delay);
+      };
+    }
+
+    /*
+      =========================================================
+      INICIALIZACIÓN
+      =========================================================
+    */
+    loadData();
+  </script>
+</body>
+</html>
