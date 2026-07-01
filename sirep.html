@@ -1,0 +1,2518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Portal Estadístico | Censo de Servidores Públicos</title>
+
+  <style>
+    /* =========================================================
+       PORTAL ESTADÍSTICO SIREP
+       HTML + CSS + JAVASCRIPT PURO
+       Sin frameworks
+       Listo para GitHub Pages
+       ========================================================= */
+
+    :root {
+      --black: #050505;
+      --black-soft: #111827;
+      --gold: #d4af37;
+      --gold-light: #f5d76e;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --green: #0f766e;
+      --red: #b91c1c;
+      --orange: #d97706;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(212, 175, 55, 0.16), transparent 28%),
+        linear-gradient(135deg, #f7f7f7, #eef2f7);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #000000, #151515);
+      color: white;
+      padding: 24px 28px;
+      border-bottom: 4px solid var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      color: var(--gold);
+      font-size: clamp(1.35rem, 2.8vw, 2.35rem);
+      letter-spacing: 0.4px;
+      line-height: 1.15;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #d1d5db;
+      font-size: 0.98rem;
+    }
+
+    .header-badge {
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      color: var(--gold-light);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .app {
+      max-width: 1600px;
+      margin: 22px auto;
+      padding: 0 18px 28px;
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 22px;
+    }
+
+    aside,
+    main {
+      min-width: 0;
+    }
+
+    .sidebar {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: sticky;
+      top: 112px;
+      max-height: calc(100vh - 134px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 18px;
+      background: linear-gradient(135deg, #111827, #000000);
+      color: white;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--gold-light);
+    }
+
+    .sidebar-header small {
+      display: block;
+      margin-top: 5px;
+      color: #d1d5db;
+    }
+
+    .sidebar-tools {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    input,
+    select,
+    button {
+      font-family: inherit;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--black-soft);
+      color: white;
+      font-weight: bold;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #b8860b);
+      color: #111;
+    }
+
+    .department-list {
+      overflow: auto;
+      padding: 10px;
+    }
+
+    .department-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .department-button {
+      width: 100%;
+      border: none;
+      background: #fff;
+      text-align: left;
+      padding: 13px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .department-button:hover {
+      background: #f9fafb;
+    }
+
+    .department-button.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-left: 5px solid var(--gold);
+    }
+
+    .department-name {
+      font-weight: bold;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .department-meta {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+
+    .toggle-symbol {
+      font-weight: bold;
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .municipalities {
+      display: none;
+      padding: 0 12px 12px;
+      background: #fafafa;
+      border-top: 1px solid var(--line);
+    }
+
+    .municipalities.open {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding-top: 12px;
+    }
+
+    .municipality-chip {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.76rem;
+      cursor: pointer;
+    }
+
+    .municipality-chip:hover,
+    .municipality-chip.active {
+      background: var(--black-soft);
+      color: var(--gold-light);
+      border-color: var(--black-soft);
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 12px;
+      color: #111827;
+    }
+
+    .panel-subtitle {
+      margin: -6px 0 14px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(3, 1fr);
+      gap: 12px;
+      align-items: end;
+    }
+
+    .filters-second {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-weight: bold;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      background:
+        linear-gradient(135deg, rgba(212, 175, 55, 0.12), transparent),
+        #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 126px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      right: -24px;
+      bottom: -24px;
+      background: rgba(212, 175, 55, 0.18);
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: bold;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 10px;
+      font-size: clamp(1.25rem, 2vw, 1.9rem);
+      color: #111827;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .kpi small {
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .chart-card,
+    .map-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-card {
+      min-height: 560px;
+    }
+
+    .chart-card h3,
+    .map-card h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .chart-card p,
+    .map-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      min-height: 260px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .map-wrap {
+      flex: 1;
+      min-height: 420px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at center, rgba(212, 175, 55, 0.10), transparent 45%),
+        #f8fafc;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #hondurasMap {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-cell {
+      stroke: #ffffff;
+      stroke-width: 3;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      filter: drop-shadow(0 3px 5px rgba(15, 23, 42, 0.08));
+    }
+
+    .map-cell:hover {
+      stroke: #111827;
+      stroke-width: 4;
+      transform: translateY(-1px);
+    }
+
+    .map-cell.active {
+      stroke: #000000;
+      stroke-width: 5;
+    }
+
+    .map-label {
+      pointer-events: none;
+      font-size: 13px;
+      font-weight: bold;
+      fill: #111827;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .map-value-label {
+      pointer-events: none;
+      font-size: 10px;
+      fill: #374151;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .map-tooltip {
+      position: fixed;
+      z-index: 999;
+      background: #111827;
+      color: white;
+      padding: 11px 13px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      pointer-events: none;
+      box-shadow: var(--shadow);
+      max-width: 280px;
+      display: none;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 10px;
+    }
+
+    .legend-bar {
+      height: 12px;
+      width: 160px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #fef3c7, #f59e0b, #92400e);
+      border: 1px solid var(--line);
+    }
+
+    .table-tools {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      max-height: 560px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+      background: white;
+    }
+
+    thead {
+      background: #111827;
+      color: var(--gold-light);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .status {
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px dashed var(--line);
+      background: #fff;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .loader {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid #e5e7eb;
+      border-top-color: var(--gold);
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 8px;
+      padding-bottom: 16px;
+    }
+
+    @media (max-width: 1250px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+      }
+
+      .department-list {
+        max-height: 360px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filters-second {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      header {
+        padding: 20px 16px;
+      }
+
+      .app {
+        padding: 0 12px 22px;
+        margin-top: 14px;
+      }
+
+      .filters,
+      .filters-second,
+      .map-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel,
+      .chart-card,
+      .map-card {
+        padding: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px 11px;
+      }
+
+      .map-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <h1>Gestión Financiera Estatal en Salarios</h1>
+        <p>Portal estadístico del Censo de Servidores Públicos con enfoque territorial y de género</p>
+      </div>
+
+      <div class="header-badge" id="lastUpdate">
+        Conectando con datos abiertos...
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Departamentos y municipios</h2>
+        <small>Seleccione un departamento o municipio para filtrar el portal</small>
+      </div>
+
+      <div class="sidebar-tools">
+        <input
+          id="sideSearch"
+          class="input"
+          type="search"
+          placeholder="Buscar departamento o municipio..."
+          autocomplete="off"
+        />
+
+        <button id="clearSelectionBtn" class="btn btn-gold" type="button">
+          Ver todo el país
+        </button>
+      </div>
+
+      <div id="departmentList" class="department-list">
+        <div class="status">
+          <div class="loader"></div>
+          <span>Cargando territorio...</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="loadingState" class="status">
+        <div class="loader"></div>
+        <div>
+          <strong>Cargando datos reales desde el CSV de SEFIN.</strong><br />
+          <span>El portal está procesando servidores públicos, salario integral, género, institución y territorio.</span>
+        </div>
+      </section>
+
+      <section id="errorState" class="status hidden">
+        <div>⚠️</div>
+        <div>
+          <strong>No fue posible cargar los datos.</strong><br />
+          <span id="errorMessage">Revise la conexión, CORS o disponibilidad del CSV.</span>
+        </div>
+      </section>
+
+      <section id="emptyState" class="status hidden">
+        <div>🔎</div>
+        <div>
+          <strong>No hay registros para los filtros aplicados.</strong><br />
+          <span>Intente cambiar la institución, departamento, municipio, sexo, gestión o modalidad.</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Panel de análisis</h2>
+        <p class="panel-subtitle">
+          Filtros dinámicos basados en las columnas reales del CSV: institución, departamento, municipio, modalidad, sexo, gestión y mes.
+        </p>
+
+        <div class="filters">
+          <div class="field">
+            <label for="globalSearch">Buscador general</label>
+            <input
+              id="globalSearch"
+              class="input"
+              type="search"
+              placeholder="Buscar institución, departamento o municipio..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="field">
+            <label for="institutionFilter">Institución</label>
+            <select id="institutionFilter" class="select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="departmentFilter">Departamento</label>
+            <select id="departmentFilter" class="select">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="municipalityFilter">Municipio</label>
+            <select id="municipalityFilter" class="select">
+              <option value="">Todos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filters-second">
+          <div class="field">
+            <label for="modalityFilter">Modalidad</label>
+            <select id="modalityFilter" class="select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="genderFilter">Sexo</label>
+            <select id="genderFilter" class="select">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="gestionFilter">Gestión</label>
+            <select id="gestionFilter" class="select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="monthFilter">Mes</label>
+            <select id="monthFilter" class="select">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="tableLimit">Mostrar tabla</label>
+            <select id="tableLimit" class="select">
+              <option value="100">100 registros</option>
+              <option value="250">250 registros</option>
+              <option value="500">500 registros</option>
+              <option value="1000">1000 registros</option>
+              <option value="all">Todos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="resetBtn" class="btn" type="button">Limpiar filtros</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="kpis">
+        <article class="kpi">
+          <span>Total servidores</span>
+          <strong id="kpiServers">0</strong>
+          <small>Suma de servidores visibles</small>
+        </article>
+
+        <article class="kpi">
+          <span>Masa salarial</span>
+          <strong id="kpiSalary">L 0.00</strong>
+          <small>Suma de salario integral</small>
+        </article>
+
+        <article class="kpi">
+          <span>Instituciones</span>
+          <strong id="kpiInstitutions">0</strong>
+          <small>Instituciones en registros visibles</small>
+        </article>
+
+        <article class="kpi">
+          <span>Departamentos</span>
+          <strong id="kpiDepartments">0</strong>
+          <small>Cobertura territorial visible</small>
+        </article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="map-card">
+          <h3>Mapa territorial de Honduras</h3>
+          <p>
+            Mapa SVG integrado sin frameworks. El color representa la métrica seleccionada por departamento.
+          </p>
+
+          <div class="map-toolbar">
+            <select id="mapMetric" class="select">
+              <option value="servidores">Servidores públicos</option>
+              <option value="salariointegral">Masa salarial</option>
+              <option value="hombres">Servidores hombres</option>
+              <option value="mujeres">Servidoras mujeres</option>
+            </select>
+
+            <select id="mapColor" class="select">
+              <option value="gold">Escala dorada</option>
+              <option value="blue">Escala azul</option>
+              <option value="green">Escala verde</option>
+              <option value="purple">Escala morada</option>
+            </select>
+          </div>
+
+          <div class="map-wrap">
+            <svg id="hondurasMap" viewBox="0 0 920 620" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+
+          <div class="legend">
+            <span>Menor valor</span>
+            <span class="legend-bar" id="legendBar"></span>
+            <span>Mayor valor</span>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Top departamentos</h3>
+          <p>Ranking territorial según la métrica seleccionada en el mapa.</p>
+          <div class="chart-wrap">
+            <canvas id="departmentChart"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <section class="charts-grid">
+        <article class="chart-card">
+          <h3>Evolución de servidores por gestión</h3>
+          <p>Total de servidores públicos por año o gestión.</p>
+          <div class="chart-wrap">
+            <canvas id="serversLineChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Ingresos por género</h3>
+          <p>Línea comparativa de salario integral acumulado entre hombres y mujeres por gestión.</p>
+          <div class="chart-wrap">
+            <canvas id="incomeGenderLineChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Servidores por sexo</h3>
+          <p>Distribución de servidores públicos según sexo.</p>
+          <div class="chart-wrap">
+            <canvas id="genderBarChart"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3>Top instituciones por masa salarial</h3>
+          <p>Instituciones con mayor salario integral acumulado según filtros.</p>
+          <div class="chart-wrap">
+            <canvas id="institutionChart"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="table-tools">
+          <div>
+            <h2>Tabla dinámica de registros</h2>
+            <p class="panel-subtitle" id="recordCount">0 registros visibles</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Institución</th>
+                <th>Departamento</th>
+                <th>Municipio</th>
+                <th>Modalidad</th>
+                <th>Sexo</th>
+                <th class="text-right">Servidores</th>
+                <th class="text-right">Salario integral</th>
+                <th>Gestión</th>
+                <th>Mes</th>
+                <th>Fecha creación</th>
+              </tr>
+            </thead>
+
+            <tbody id="dataTable">
+              <tr>
+                <td colspan="10" class="muted">Cargando datos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        Portal generado con HTML, CSS y JavaScript puro. Datos consumidos dinámicamente desde CSV público.
+      </footer>
+    </main>
+  </div>
+
+  <div id="mapTooltip" class="map-tooltip"></div>
+
+  <script>
+    /*
+      =========================================================
+      CONEXIÓN AL CSV DE SEFIN
+      Reemplaza esta URL si deseas usar otro CSV.
+      Debe devolver texto CSV directamente.
+      =========================================================
+    */
+    const CSV_URL = "https://www.sefin.gob.hn/wp-content/uploads/2025/censo_servidores/SirepServidores.csv";
+
+    /*
+      =========================================================
+      MAPA SVG INTEGRADO
+      Este mapa es un tablero territorial SVG, no usa frameworks.
+      Cada celda representa un departamento de Honduras.
+      Está diseñado para colorearse dinámicamente según los datos.
+      =========================================================
+    */
+    const HONDURAS_DEPARTMENTS = [
+      { name: "Copán", code: "CP", x: 70,  y: 180, w: 120, h: 76 },
+      { name: "Ocotepeque", code: "OC", x: 40,  y: 270, w: 120, h: 76 },
+      { name: "Lempira", code: "LE", x: 180, y: 285, w: 120, h: 76 },
+      { name: "Intibucá", code: "IN", x: 300, y: 310, w: 120, h: 76 },
+      { name: "La Paz", code: "LP", x: 420, y: 325, w: 120, h: 76 },
+      { name: "Santa Bárbara", code: "SB", x: 205, y: 165, w: 135, h: 76 },
+      { name: "Cortés", code: "CR", x: 345, y: 135, w: 120, h: 76 },
+      { name: "Yoro", code: "YO", x: 475, y: 145, w: 120, h: 76 },
+      { name: "Atlántida", code: "AT", x: 610, y: 115, w: 120, h: 76 },
+      { name: "Colón", code: "CL", x: 735, y: 130, w: 120, h: 76 },
+      { name: "Islas de la Bahía", code: "IB", x: 575, y: 35, w: 185, h: 58 },
+      { name: "Comayagua", code: "CM", x: 350, y: 235, w: 135, h: 76 },
+      { name: "Francisco Morazán", code: "FM", x: 500, y: 250, w: 160, h: 76 },
+      { name: "El Paraíso", code: "EP", x: 665, y: 315, w: 135, h: 76 },
+      { name: "Olancho", code: "OL", x: 650, y: 220, w: 170, h: 76 },
+      { name: "Valle", code: "VA", x: 405, y: 430, w: 120, h: 76 },
+      { name: "Choluteca", code: "CH", x: 535, y: 430, w: 135, h: 76 },
+      { name: "Gracias a Dios", code: "GD", x: 735, y: 410, w: 150, h: 76 }
+    ];
+
+    /*
+      =========================================================
+      ESTADO GENERAL
+      =========================================================
+    */
+    const state = {
+      rawData: [],
+      filteredData: [],
+      selectedInstitution: "",
+      selectedDepartment: "",
+      selectedMunicipality: "",
+      selectedModality: "",
+      selectedGender: "",
+      selectedGestion: "",
+      selectedMonth: "",
+      searchText: "",
+      expandedDepartments: new Set()
+    };
+
+    /*
+      =========================================================
+      DOM
+      =========================================================
+    */
+    const el = {
+      lastUpdate: document.getElementById("lastUpdate"),
+      loadingState: document.getElementById("loadingState"),
+      errorState: document.getElementById("errorState"),
+      emptyState: document.getElementById("emptyState"),
+      errorMessage: document.getElementById("errorMessage"),
+
+      sideSearch: document.getElementById("sideSearch"),
+      globalSearch: document.getElementById("globalSearch"),
+
+      institutionFilter: document.getElementById("institutionFilter"),
+      departmentFilter: document.getElementById("departmentFilter"),
+      municipalityFilter: document.getElementById("municipalityFilter"),
+      modalityFilter: document.getElementById("modalityFilter"),
+      genderFilter: document.getElementById("genderFilter"),
+      gestionFilter: document.getElementById("gestionFilter"),
+      monthFilter: document.getElementById("monthFilter"),
+      tableLimit: document.getElementById("tableLimit"),
+      resetBtn: document.getElementById("resetBtn"),
+      clearSelectionBtn: document.getElementById("clearSelectionBtn"),
+
+      departmentList: document.getElementById("departmentList"),
+      dataTable: document.getElementById("dataTable"),
+      recordCount: document.getElementById("recordCount"),
+
+      kpiServers: document.getElementById("kpiServers"),
+      kpiSalary: document.getElementById("kpiSalary"),
+      kpiInstitutions: document.getElementById("kpiInstitutions"),
+      kpiDepartments: document.getElementById("kpiDepartments"),
+
+      mapMetric: document.getElementById("mapMetric"),
+      mapColor: document.getElementById("mapColor"),
+      hondurasMap: document.getElementById("hondurasMap"),
+      mapTooltip: document.getElementById("mapTooltip"),
+      legendBar: document.getElementById("legendBar"),
+
+      departmentChart: document.getElementById("departmentChart"),
+      serversLineChart: document.getElementById("serversLineChart"),
+      incomeGenderLineChart: document.getElementById("incomeGenderLineChart"),
+      genderBarChart: document.getElementById("genderBarChart"),
+      institutionChart: document.getElementById("institutionChart")
+    };
+
+    /*
+      =========================================================
+      FORMATEADORES
+      =========================================================
+    */
+    const numberFormatter = new Intl.NumberFormat("es-HN", {
+      maximumFractionDigits: 0
+    });
+
+    const currencyFormatter = new Intl.NumberFormat("es-HN", {
+      style: "currency",
+      currency: "HNL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function formatNumber(value) {
+      return numberFormatter.format(Number(value) || 0);
+    }
+
+    function formatCurrency(value) {
+      return currencyFormatter.format(Number(value) || 0);
+    }
+
+    function compactNumber(value) {
+      return new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(Number(value) || 0);
+    }
+
+    function compactCurrency(value) {
+      return "L " + new Intl.NumberFormat("es-HN", {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(Number(value) || 0);
+    }
+
+    /*
+      =========================================================
+      NORMALIZACIÓN DE TEXTO
+      Evita problemas entre Cortés/CORTES/cortes.
+      =========================================================
+    */
+    function normalizeText(text) {
+      return String(text || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function normalizeGender(text) {
+      const value = normalizeText(text);
+
+      if (value.includes("mujer") || value === "f" || value.includes("femenino")) {
+        return "Mujeres";
+      }
+
+      if (value.includes("hombre") || value === "m" || value.includes("masculino")) {
+        return "Hombres";
+      }
+
+      return String(text || "Sin dato").trim() || "Sin dato";
+    }
+
+    /*
+      =========================================================
+      PARSER CSV
+      Compatible con coma o punto y coma.
+      Respeta campos entre comillas.
+      =========================================================
+    */
+    function detectDelimiter(firstLine) {
+      const semicolons = (firstLine.match(/;/g) || []).length;
+      const commas = (firstLine.match(/,/g) || []).length;
+      return semicolons > commas ? ";" : ",";
+    }
+
+    function parseCSVLine(line, delimiter) {
+      const values = [];
+      let current = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+
+        if (char === '"' && insideQuotes && nextChar === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === delimiter && !insideQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      values.push(current.trim());
+
+      return values.map(value => value.replace(/^"|"$/g, ""));
+    }
+
+    function parseCSV(text) {
+      const cleanText = String(text || "").replace(/\r/g, "").trim();
+
+      if (!cleanText) return [];
+
+      const lines = cleanText
+        .split("\n")
+        .filter(line => line.trim() !== "");
+
+      const delimiter = detectDelimiter(lines[0]);
+
+      const headers = parseCSVLine(lines[0], delimiter)
+        .map(header => header.trim().replace(/^"|"$/g, ""));
+
+      return lines.slice(1).map(line => {
+        const values = parseCSVLine(line, delimiter);
+        const row = {};
+
+        headers.forEach((header, index) => {
+          row[header] = values[index] ?? "";
+        });
+
+        return normalizeRow(row);
+      });
+    }
+
+    /*
+      =========================================================
+      NORMALIZACIÓN DEL CSV SIREP
+      Columnas reales:
+      idSirepServidores, nivel, departamento, muni, institucion,
+      modalidad, sexo, servidores, salariointegral, color,
+      deptomuni, gestion, mes, fecha_creacion
+      =========================================================
+    */
+    function toNumber(value) {
+      if (value === null || value === undefined) return 0;
+
+      const raw = String(value)
+        .replace(/L/gi, "")
+        .replace(/HNL/gi, "")
+        .replace(/\s/g, "")
+        .replace(/,/g, "")
+        .replace(/[^\d.-]/g, "");
+
+      const number = Number(raw);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function normalizeRow(row) {
+      const departamento = String(row.departamento ?? row.Departamento ?? "").trim();
+      const municipio = String(row.muni ?? row.municipio ?? row.Municipio ?? "").trim();
+      const sexo = normalizeGender(row.sexo ?? row.Sexo ?? "");
+
+      return {
+        idSirepServidores: String(row.idSirepServidores ?? "").trim(),
+        nivel: String(row.nivel ?? "").trim(),
+        departamento,
+        departamentoKey: normalizeText(departamento),
+        muni: municipio,
+        muniKey: normalizeText(municipio),
+        institucion: String(row.institucion ?? row.Institucion ?? "").trim(),
+        modalidad: String(row.modalidad ?? row.Modalidad ?? "").trim(),
+        sexo,
+        sexoKey: normalizeText(sexo),
+        servidores: toNumber(row.servidores ?? row.Servidores),
+        salariointegral: toNumber(row.salariointegral ?? row.SalarioIntegral ?? row.salario_integral),
+        color: String(row.color ?? "").trim(),
+        deptomuni: String(row.deptomuni ?? "").trim(),
+        gestion: String(row.gestion ?? row.Gestion ?? "").trim(),
+        mes: String(row.mes ?? row.Mes ?? "").trim(),
+        fecha_creacion: String(row.fecha_creacion ?? row.fechaCreacion ?? "").trim(),
+        original: row
+      };
+    }
+
+    /*
+      =========================================================
+      CARGA DE DATOS
+      =========================================================
+    */
+    async function loadData() {
+      try {
+        showLoading(true);
+        hideError();
+
+        console.log("Cargando CSV desde:", CSV_URL);
+
+        const response = await fetch(CSV_URL, {
+          method: "GET",
+          cache: "no-store"
+        });
+
+        console.log("Estado de respuesta:", response.status);
+
+        if (!response.ok) {
+          throw new Error("Respuesta no válida del servidor: " + response.status);
+        }
+
+        const csvText = await response.text();
+
+        console.log("Vista previa del CSV:");
+        console.log(csvText.substring(0, 350));
+
+        const parsed = parseCSV(csvText).filter(row => {
+          return row.departamento && row.institucion;
+        });
+
+        if (!parsed.length) {
+          throw new Error("El CSV no contiene registros válidos con departamento e institución.");
+        }
+
+        state.rawData = parsed;
+        state.filteredData = parsed;
+
+        el.lastUpdate.textContent =
+          "Datos cargados: " + new Date().toLocaleString("es-HN");
+
+        buildFilters();
+        applyFilters();
+        showLoading(false);
+      } catch (error) {
+        console.error(error);
+        showLoading(false);
+        showError(error.message || "Error desconocido al cargar el CSV.");
+      }
+    }
+
+    /*
+      =========================================================
+      FILTROS
+      =========================================================
+    */
+    function uniqueSorted(values) {
+      return [...new Set(values.filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), "es", { numeric: true }));
+    }
+
+    function buildSelect(select, values, defaultText) {
+      select.innerHTML = `<option value="">${defaultText}</option>`;
+
+      uniqueSorted(values).forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function buildFilters() {
+      buildSelect(el.institutionFilter, state.rawData.map(r => r.institucion), "Todas");
+      buildSelect(el.departmentFilter, state.rawData.map(r => r.departamento), "Todos");
+      buildSelect(el.municipalityFilter, state.rawData.map(r => r.muni), "Todos");
+      buildSelect(el.modalityFilter, state.rawData.map(r => r.modalidad), "Todas");
+      buildSelect(el.genderFilter, state.rawData.map(r => r.sexo), "Todos");
+      buildSelect(el.gestionFilter, state.rawData.map(r => r.gestion), "Todas");
+      buildSelect(el.monthFilter, state.rawData.map(r => r.mes), "Todos");
+    }
+
+    function refreshMunicipalitiesByDepartment() {
+      const source = state.selectedDepartment
+        ? state.rawData.filter(r => r.departamento === state.selectedDepartment)
+        : state.rawData;
+
+      const current = el.municipalityFilter.value;
+
+      buildSelect(el.municipalityFilter, source.map(r => r.muni), "Todos");
+
+      if ([...el.municipalityFilter.options].some(opt => opt.value === current)) {
+        el.municipalityFilter.value = current;
+      }
+    }
+
+    function applyFilters() {
+      const search = normalizeText(state.searchText);
+
+      state.filteredData = state.rawData.filter(row => {
+        const matchesSearch =
+          !search ||
+          normalizeText(row.institucion).includes(search) ||
+          normalizeText(row.departamento).includes(search) ||
+          normalizeText(row.muni).includes(search) ||
+          normalizeText(row.modalidad).includes(search);
+
+        const matchesInstitution =
+          !state.selectedInstitution ||
+          row.institucion === state.selectedInstitution;
+
+        const matchesDepartment =
+          !state.selectedDepartment ||
+          row.departamento === state.selectedDepartment;
+
+        const matchesMunicipality =
+          !state.selectedMunicipality ||
+          row.muni === state.selectedMunicipality;
+
+        const matchesModality =
+          !state.selectedModality ||
+          row.modalidad === state.selectedModality;
+
+        const matchesGender =
+          !state.selectedGender ||
+          row.sexo === state.selectedGender;
+
+        const matchesGestion =
+          !state.selectedGestion ||
+          row.gestion === state.selectedGestion;
+
+        const matchesMonth =
+          !state.selectedMonth ||
+          row.mes === state.selectedMonth;
+
+        return (
+          matchesSearch &&
+          matchesInstitution &&
+          matchesDepartment &&
+          matchesMunicipality &&
+          matchesModality &&
+          matchesGender &&
+          matchesGestion &&
+          matchesMonth
+        );
+      });
+
+      el.emptyState.classList.toggle("hidden", state.filteredData.length > 0);
+
+      refreshMunicipalitiesByDepartment();
+      renderSidebar();
+      renderKPIs();
+      renderMap();
+      renderCharts();
+      renderTable();
+    }
+
+    /*
+      =========================================================
+      PANEL LATERAL: DEPARTAMENTOS Y MUNICIPIOS
+      =========================================================
+    */
+    function renderSidebar() {
+      const search = normalizeText(el.sideSearch.value);
+
+      const departments = uniqueSorted(
+        state.rawData
+          .map(row => row.departamento)
+          .filter(dep => {
+            if (!search) return true;
+
+            const municipalities = state.rawData
+              .filter(r => r.departamento === dep)
+              .map(r => r.muni);
+
+            return (
+              normalizeText(dep).includes(search) ||
+              municipalities.some(m => normalizeText(m).includes(search))
+            );
+          })
+      );
+
+      if (!departments.length) {
+        el.departmentList.innerHTML = `
+          <div class="status">
+            <span>🔎</span>
+            <span>No se encontraron territorios.</span>
+          </div>
+        `;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      departments.forEach(department => {
+        const rows = state.rawData.filter(r => r.departamento === department);
+        const municipalities = uniqueSorted(rows.map(r => r.muni));
+        const totalServers = rows.reduce((sum, r) => sum + r.servidores, 0);
+
+        const isExpanded = state.expandedDepartments.has(department);
+        const isActive = state.selectedDepartment === department;
+
+        const item = document.createElement("div");
+        item.className = "department-item";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "department-button" + (isActive ? " active" : "");
+
+        button.innerHTML = `
+          <div>
+            <div class="department-name">${escapeHTML(department)}</div>
+            <div class="department-meta">
+              ${municipalities.length} municipio(s) · ${formatNumber(totalServers)} servidores
+            </div>
+          </div>
+          <div class="toggle-symbol">${isExpanded ? "−" : "+"}</div>
+        `;
+
+        button.addEventListener("click", () => {
+          state.selectedDepartment = department;
+          state.selectedMunicipality = "";
+
+          el.departmentFilter.value = department;
+          el.municipalityFilter.value = "";
+
+          if (state.expandedDepartments.has(department)) {
+            state.expandedDepartments.delete(department);
+          } else {
+            state.expandedDepartments.add(department);
+          }
+
+          applyFilters();
+        });
+
+        const municipalityBox = document.createElement("div");
+        municipalityBox.className = "municipalities" + (isExpanded ? " open" : "");
+
+        municipalities.forEach(municipality => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "municipality-chip" + (
+            state.selectedDepartment === department &&
+            state.selectedMunicipality === municipality
+              ? " active"
+              : ""
+          );
+
+          chip.textContent = municipality;
+
+          chip.addEventListener("click", event => {
+            event.stopPropagation();
+
+            state.selectedDepartment = department;
+            state.selectedMunicipality = municipality;
+
+            el.departmentFilter.value = department;
+            refreshMunicipalitiesByDepartment();
+            el.municipalityFilter.value = municipality;
+
+            state.expandedDepartments.add(department);
+
+            applyFilters();
+          });
+
+          municipalityBox.appendChild(chip);
+        });
+
+        item.appendChild(button);
+        item.appendChild(municipalityBox);
+        fragment.appendChild(item);
+      });
+
+      el.departmentList.innerHTML = "";
+      el.departmentList.appendChild(fragment);
+    }
+
+    /*
+      =========================================================
+      KPIS
+      =========================================================
+    */
+    function renderKPIs() {
+      const data = state.filteredData;
+
+      const servers = data.reduce((sum, r) => sum + r.servidores, 0);
+      const salary = data.reduce((sum, r) => sum + r.salariointegral, 0);
+      const institutions = uniqueSorted(data.map(r => r.institucion)).length;
+      const departments = uniqueSorted(data.map(r => r.departamento)).length;
+
+      el.kpiServers.textContent = formatNumber(servers);
+      el.kpiSalary.textContent = formatCurrency(salary);
+      el.kpiInstitutions.textContent = formatNumber(institutions);
+      el.kpiDepartments.textContent = formatNumber(departments);
+    }
+
+    /*
+      =========================================================
+      AGRUPACIONES
+      =========================================================
+    */
+    function groupBy(data, key, metric) {
+      return data.reduce((acc, row) => {
+        const label = row[key] || "Sin dato";
+        acc[label] = (acc[label] || 0) + (Number(row[metric]) || 0);
+        return acc;
+      }, {});
+    }
+
+    function groupDepartmentStats(data) {
+      const result = {};
+
+      data.forEach(row => {
+        const key = row.departamentoKey;
+        const name = row.departamento || "Sin dato";
+
+        if (!result[key]) {
+          result[key] = {
+            name,
+            servidores: 0,
+            salariointegral: 0,
+            hombres: 0,
+            mujeres: 0
+          };
+        }
+
+        result[key].servidores += row.servidores;
+        result[key].salariointegral += row.salariointegral;
+
+        if (row.sexo === "Hombres") {
+          result[key].hombres += row.servidores;
+        }
+
+        if (row.sexo === "Mujeres") {
+          result[key].mujeres += row.servidores;
+        }
+      });
+
+      return result;
+    }
+
+    function groupMetricByGestionAndGender(data, metric) {
+      const labels = uniqueSorted(data.map(r => r.gestion));
+      const men = {};
+      const women = {};
+
+      data.forEach(row => {
+        const gestion = row.gestion || "Sin dato";
+
+        if (!men[gestion]) men[gestion] = 0;
+        if (!women[gestion]) women[gestion] = 0;
+
+        if (row.sexo === "Hombres") {
+          men[gestion] += Number(row[metric]) || 0;
+        }
+
+        if (row.sexo === "Mujeres") {
+          women[gestion] += Number(row[metric]) || 0;
+        }
+      });
+
+      return {
+        labels,
+        menValues: labels.map(label => men[label] || 0),
+        womenValues: labels.map(label => women[label] || 0)
+      };
+    }
+
+    function objectToTopSeries(obj, limit = 10) {
+      const entries = Object.entries(obj)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit);
+
+      return {
+        labels: entries.map(e => e[0]),
+        values: entries.map(e => e[1])
+      };
+    }
+
+    function objectToSortedSeries(obj) {
+      const entries = Object.entries(obj)
+        .sort((a, b) => String(a[0]).localeCompare(String(b[0]), "es", { numeric: true }));
+
+      return {
+        labels: entries.map(e => e[0]),
+        values: entries.map(e => e[1])
+      };
+    }
+
+    /*
+      =========================================================
+      MAPA SVG
+      =========================================================
+    */
+    function renderMap() {
+      const svg = el.hondurasMap;
+      const metric = el.mapMetric.value;
+      const colorScale = el.mapColor.value;
+
+      svg.innerHTML = "";
+
+      updateLegend(colorScale);
+
+      const grouped = groupDepartmentStats(state.filteredData);
+
+      const values = Object.values(grouped).map(item => item[metric] || 0);
+      const maxValue = Math.max(...values, 1);
+
+      const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      background.setAttribute("x", "0");
+      background.setAttribute("y", "0");
+      background.setAttribute("width", "920");
+      background.setAttribute("height", "620");
+      background.setAttribute("fill", "transparent");
+      svg.appendChild(background);
+
+      HONDURAS_DEPARTMENTS.forEach(dep => {
+        const key = normalizeText(dep.name);
+        const stats = grouped[key] || {
+          name: dep.name,
+          servidores: 0,
+          salariointegral: 0,
+          hombres: 0,
+          mujeres: 0
+        };
+
+        const value = stats[metric] || 0;
+        const color = getMapColor(value, maxValue, colorScale);
+
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", dep.x);
+        rect.setAttribute("y", dep.y);
+        rect.setAttribute("width", dep.w);
+        rect.setAttribute("height", dep.h);
+        rect.setAttribute("rx", "18");
+        rect.setAttribute("ry", "18");
+        rect.setAttribute("fill", color);
+        rect.setAttribute("class", "map-cell" + (state.selectedDepartment === dep.name ? " active" : ""));
+        rect.setAttribute("data-department", dep.name);
+
+        rect.addEventListener("mousemove", event => {
+          showMapTooltip(event, dep.name, stats);
+        });
+
+        rect.addEventListener("mouseleave", hideMapTooltip);
+
+        rect.addEventListener("click", () => {
+          state.selectedDepartment = dep.name;
+          state.selectedMunicipality = "";
+          el.departmentFilter.value = dep.name;
+          el.municipalityFilter.value = "";
+          state.expandedDepartments.add(dep.name);
+          applyFilters();
+        });
+
+        svg.appendChild(rect);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", dep.x + dep.w / 2);
+        label.setAttribute("y", dep.y + dep.h / 2 - 8);
+        label.setAttribute("class", "map-label");
+        label.textContent = dep.name.length > 16 ? dep.code : dep.name;
+        svg.appendChild(label);
+
+        const valueLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        valueLabel.setAttribute("x", dep.x + dep.w / 2);
+        valueLabel.setAttribute("y", dep.y + dep.h / 2 + 14);
+        valueLabel.setAttribute("class", "map-value-label");
+        valueLabel.textContent = metric === "salariointegral"
+          ? compactCurrency(value)
+          : compactNumber(value);
+        svg.appendChild(valueLabel);
+      });
+    }
+
+    function getMapColor(value, maxValue, palette) {
+      const ratio = maxValue ? value / maxValue : 0;
+
+      const palettes = {
+        gold: ["#fff7d6", "#f7d774", "#d4af37", "#9a6b00", "#4a3700"],
+        blue: ["#dbeafe", "#93c5fd", "#3b82f6", "#1d4ed8", "#172554"],
+        green: ["#dcfce7", "#86efac", "#22c55e", "#15803d", "#052e16"],
+        purple: ["#ede9fe", "#c4b5fd", "#8b5cf6", "#6d28d9", "#2e1065"]
+      };
+
+      const colors = palettes[palette] || palettes.gold;
+
+      if (ratio === 0) return "#e5e7eb";
+      if (ratio <= 0.2) return colors[0];
+      if (ratio <= 0.4) return colors[1];
+      if (ratio <= 0.6) return colors[2];
+      if (ratio <= 0.8) return colors[3];
+      return colors[4];
+    }
+
+    function updateLegend(palette) {
+      const gradients = {
+        gold: "linear-gradient(90deg, #fff7d6, #f7d774, #d4af37, #9a6b00, #4a3700)",
+        blue: "linear-gradient(90deg, #dbeafe, #93c5fd, #3b82f6, #1d4ed8, #172554)",
+        green: "linear-gradient(90deg, #dcfce7, #86efac, #22c55e, #15803d, #052e16)",
+        purple: "linear-gradient(90deg, #ede9fe, #c4b5fd, #8b5cf6, #6d28d9, #2e1065)"
+      };
+
+      el.legendBar.style.background = gradients[palette] || gradients.gold;
+    }
+
+    function showMapTooltip(event, department, stats) {
+      el.mapTooltip.innerHTML = `
+        <strong>${escapeHTML(department)}</strong><br>
+        Servidores: ${formatNumber(stats.servidores)}<br>
+        Masa salarial: ${formatCurrency(stats.salariointegral)}<br>
+        Hombres: ${formatNumber(stats.hombres)}<br>
+        Mujeres: ${formatNumber(stats.mujeres)}
+      `;
+
+      el.mapTooltip.style.display = "block";
+      el.mapTooltip.style.left = event.clientX + 14 + "px";
+      el.mapTooltip.style.top = event.clientY + 14 + "px";
+    }
+
+    function hideMapTooltip() {
+      el.mapTooltip.style.display = "none";
+    }
+
+    /*
+      =========================================================
+      GRÁFICOS
+      =========================================================
+    */
+    function renderCharts() {
+      renderDepartmentChart();
+      renderServersLineChart();
+      renderIncomeGenderLineChart();
+      renderGenderBarChart();
+      renderInstitutionChart();
+    }
+
+    function renderDepartmentChart() {
+      const metric = el.mapMetric.value;
+      const grouped = groupDepartmentStats(state.filteredData);
+
+      const obj = {};
+
+      Object.values(grouped).forEach(item => {
+        obj[item.name] = item[metric] || 0;
+      });
+
+      const series = objectToTopSeries(obj, 10);
+
+      drawHorizontalBarChart(el.departmentChart, {
+        labels: series.labels,
+        values: series.values,
+        color: "#d4af37",
+        money: metric === "salariointegral",
+        emptyMessage: "No hay datos por departamento."
+      });
+    }
+
+    function renderServersLineChart() {
+      const grouped = groupBy(state.filteredData, "gestion", "servidores");
+      const series = objectToSortedSeries(grouped);
+
+      drawLineChart(el.serversLineChart, {
+        labels: series.labels,
+        datasets: [
+          {
+            name: "Servidores",
+            values: series.values,
+            color: "#0f766e"
+          }
+        ],
+        money: false,
+        emptyMessage: "No hay datos de servidores por gestión."
+      });
+    }
+
+    function renderIncomeGenderLineChart() {
+      const series = groupMetricByGestionAndGender(state.filteredData, "salariointegral");
+
+      drawLineChart(el.incomeGenderLineChart, {
+        labels: series.labels,
+        datasets: [
+          {
+            name: "Hombres",
+            values: series.menValues,
+            color: "#2563eb"
+          },
+          {
+            name: "Mujeres",
+            values: series.womenValues,
+            color: "#d4af37"
+          }
+        ],
+        money: true,
+        emptyMessage: "No hay datos salariales por género."
+      });
+    }
+
+    function renderGenderBarChart() {
+      const grouped = groupBy(state.filteredData, "sexo", "servidores");
+      const series = objectToTopSeries(grouped, 10);
+
+      drawBarChart(el.genderBarChart, {
+        labels: series.labels,
+        datasets: [
+          {
+            name: "Servidores",
+            values: series.values,
+            color: "#7c3aed"
+          }
+        ],
+        money: false,
+        emptyMessage: "No hay datos por sexo."
+      });
+    }
+
+    function renderInstitutionChart() {
+      const grouped = groupBy(state.filteredData, "institucion", "salariointegral");
+      const series = objectToTopSeries(grouped, 10);
+
+      drawHorizontalBarChart(el.institutionChart, {
+        labels: series.labels,
+        values: series.values,
+        color: "#1d4ed8",
+        money: true,
+        emptyMessage: "No hay datos por institución."
+      });
+    }
+
+    /*
+      =========================================================
+      MOTOR DE GRÁFICOS EN CANVAS
+      =========================================================
+    */
+    function setupCanvas(canvas) {
+      const parent = canvas.parentElement;
+      const rect = parent.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = Math.max(320, rect.width) * dpr;
+      canvas.height = Math.max(260, rect.height) * dpr;
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      return {
+        ctx,
+        width: canvas.width / dpr,
+        height: canvas.height / dpr
+      };
+    }
+
+    function drawEmptyCanvas(canvas, message) {
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "15px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      wrapText(
+        ctx,
+        message,
+        width / 2,
+        height / 2,
+        Math.min(width - 50, 520),
+        22
+      );
+    }
+
+    function drawBarChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const labels = options.labels || [];
+      const datasets = options.datasets || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !datasets.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 36,
+        right: 24,
+        bottom: 72,
+        left: 78
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const allValues = datasets.flatMap(dataset => dataset.values);
+      const maxValue = Math.max(...allValues, 1);
+      const niceMax = maxValue * 1.15;
+
+      drawGrid(ctx, padding, chartWidth, chartHeight, niceMax, options.money);
+
+      const groupWidth = chartWidth / labels.length;
+      const barGap = 5;
+      const barWidth = Math.max(7, (groupWidth - 18) / datasets.length - barGap);
+
+      labels.forEach((label, labelIndex) => {
+        datasets.forEach((dataset, datasetIndex) => {
+          const value = dataset.values[labelIndex] || 0;
+          const barHeight = (value / niceMax) * chartHeight;
+
+          const x =
+            padding.left +
+            labelIndex * groupWidth +
+            9 +
+            datasetIndex * (barWidth + barGap);
+
+          const y =
+            padding.top +
+            chartHeight -
+            barHeight;
+
+          roundRect(ctx, x, y, barWidth, barHeight, 7, dataset.color);
+        });
+
+        ctx.save();
+        ctx.translate(
+          padding.left + labelIndex * groupWidth + groupWidth / 2,
+          height - 34
+        );
+        ctx.rotate(-Math.PI / 5);
+        ctx.fillStyle = "#4b5563";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(truncateLabel(label, 16), 0, 0);
+        ctx.restore();
+      });
+
+      drawLegend(ctx, datasets, padding.left, 14);
+    }
+
+    function drawHorizontalBarChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const labels = options.labels || [];
+      const values = options.values || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !values.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 24,
+        right: 48,
+        bottom: 36,
+        left: Math.min(270, Math.max(150, width * 0.40))
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const maxValue = Math.max(...values, 1) * 1.12;
+      const rowHeight = chartHeight / labels.length;
+      const barHeight = Math.max(12, Math.min(28, rowHeight * 0.58));
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + chartHeight);
+      ctx.stroke();
+
+      labels.forEach((label, index) => {
+        const value = values[index] || 0;
+        const barWidth = (value / maxValue) * chartWidth;
+
+        const y =
+          padding.top +
+          index * rowHeight +
+          (rowHeight - barHeight) / 2;
+
+        ctx.fillStyle = "#374151";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(
+          truncateLabel(label, 31),
+          padding.left - 10,
+          y + barHeight / 2
+        );
+
+        roundRect(
+          ctx,
+          padding.left,
+          y,
+          barWidth,
+          barHeight,
+          7,
+          options.color || "#d4af37"
+        );
+
+        ctx.fillStyle = "#4b5563";
+        ctx.font = "11px Arial";
+        ctx.textAlign = "left";
+
+        const valueText = options.money
+          ? compactCurrency(value)
+          : compactNumber(value);
+
+        ctx.fillText(
+          valueText,
+          padding.left + barWidth + 6,
+          y + barHeight / 2
+        );
+      });
+    }
+
+    function drawLineChart(canvas, options) {
+      const { ctx, width, height } = setupCanvas(canvas);
+
+      const labels = options.labels || [];
+      const datasets = options.datasets || [];
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!labels.length || !datasets.length) {
+        drawEmptyCanvas(canvas, options.emptyMessage || "Sin datos disponibles.");
+        return;
+      }
+
+      const padding = {
+        top: 42,
+        right: 34,
+        bottom: 68,
+        left: 82
+      };
+
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      const allValues = datasets.flatMap(dataset => dataset.values);
+      const maxValue = Math.max(...allValues, 1) * 1.15;
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y =
+          padding.top +
+          chartHeight -
+          (chartHeight * i / 5);
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+
+        const value = (maxValue * i) / 5;
+
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "11px Arial";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+          options.money ? compactCurrency(value) : compactNumber(value),
+          padding.left - 10,
+          y
+        );
+      }
+
+      labels.forEach((label, index) => {
+        const x =
+          padding.left +
+          (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        ctx.fillText(
+          truncateLabel(label, 12),
+          x,
+          height - 42
+        );
+      });
+
+      datasets.forEach(dataset => {
+        ctx.beginPath();
+
+        dataset.values.forEach((value, index) => {
+          const x =
+            padding.left +
+            (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+          const y =
+            padding.top +
+            chartHeight -
+            (value / maxValue) * chartHeight;
+
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+
+        ctx.strokeStyle = dataset.color;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        dataset.values.forEach((value, index) => {
+          const x =
+            padding.left +
+            (chartWidth / Math.max(1, labels.length - 1)) * index;
+
+          const y =
+            padding.top +
+            chartHeight -
+            (value / maxValue) * chartHeight;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = dataset.color;
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(x, y, 7, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(17, 24, 39, 0.12)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      });
+
+      drawLegend(ctx, datasets, padding.left, 14);
+    }
+
+    function drawGrid(ctx, padding, chartWidth, chartHeight, maxValue, money) {
+      const steps = 4;
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "11px Arial";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= steps; i++) {
+        const value = (maxValue / steps) * i;
+
+        const y =
+          padding.top +
+          chartHeight -
+          (i / steps) * chartHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+
+        ctx.fillText(
+          money ? compactCurrency(value) : compactNumber(value),
+          padding.left - 8,
+          y
+        );
+      }
+    }
+
+    function drawLegend(ctx, datasets, x, y) {
+      let currentX = x;
+
+      datasets.forEach(dataset => {
+        roundRect(ctx, currentX, y, 13, 13, 4, dataset.color);
+
+        ctx.fillStyle = "#374151";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(dataset.name, currentX + 18, y);
+
+        currentX += ctx.measureText(dataset.name).width + 48;
+      });
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, color) {
+      const r = Math.min(radius, width / 2, height / 2);
+
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    /*
+      =========================================================
+      TABLA
+      =========================================================
+    */
+    function renderTable() {
+      const data = state.filteredData;
+      const limitValue = el.tableLimit.value;
+
+      const visibleRows = limitValue === "all"
+        ? data
+        : data.slice(0, Number(limitValue));
+
+      el.recordCount.textContent =
+        `${formatNumber(data.length)} registro(s) filtrado(s) · mostrando ${formatNumber(visibleRows.length)}`;
+
+      if (!visibleRows.length) {
+        el.dataTable.innerHTML = `
+          <tr>
+            <td colspan="10" class="muted">No hay registros para mostrar.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      el.dataTable.innerHTML = visibleRows.map(row => `
+        <tr>
+          <td>${escapeHTML(row.institucion)}</td>
+          <td>${escapeHTML(row.departamento)}</td>
+          <td>${escapeHTML(row.muni)}</td>
+          <td>${escapeHTML(row.modalidad)}</td>
+          <td>${escapeHTML(row.sexo)}</td>
+          <td class="text-right">${formatNumber(row.servidores)}</td>
+          <td class="text-right">${formatCurrency(row.salariointegral)}</td>
+          <td>${escapeHTML(row.gestion)}</td>
+          <td>${escapeHTML(row.mes)}</td>
+          <td>${escapeHTML(row.fecha_creacion)}</td>
+        </tr>
+      `).join("");
+    }
+
+    /*
+      =========================================================
+      UTILIDADES
+      =========================================================
+    */
+    function truncateLabel(label, maxLength) {
+      const text = String(label || "");
+      return text.length > maxLength
+        ? text.slice(0, maxLength - 1) + "…"
+        : text;
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = String(text).split(" ");
+      const lines = [];
+      let line = "";
+
+      words.forEach(word => {
+        const testLine = line + word + " ";
+
+        if (ctx.measureText(testLine).width > maxWidth && line) {
+          lines.push(line.trim());
+          line = word + " ";
+        } else {
+          line = testLine;
+        }
+      });
+
+      lines.push(line.trim());
+
+      const startY =
+        y - ((lines.length - 1) * lineHeight) / 2;
+
+      lines.forEach((item, index) => {
+        ctx.fillText(item, x, startY + index * lineHeight);
+      });
+    }
+
+    function showLoading(isLoading) {
+      el.loadingState.classList.toggle("hidden", !isLoading);
+    }
+
+    function showError(message) {
+      el.errorMessage.textContent = message;
+      el.errorState.classList.remove("hidden");
+      el.lastUpdate.textContent = "Error al conectar";
+    }
+
+    function hideError() {
+      el.errorState.classList.add("hidden");
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function debounce(callback, delay) {
+      let timer;
+
+      return function () {
+        clearTimeout(timer);
+        timer = setTimeout(callback, delay);
+      };
+    }
+
+    /*
+      =========================================================
+      EVENTOS
+      =========================================================
+    */
+    el.globalSearch.addEventListener("input", event => {
+      state.searchText = event.target.value;
+      el.sideSearch.value = event.target.value;
+      applyFilters();
+    });
+
+    el.sideSearch.addEventListener("input", event => {
+      state.searchText = event.target.value;
+      el.globalSearch.value = event.target.value;
+      applyFilters();
+    });
+
+    el.institutionFilter.addEventListener("change", event => {
+      state.selectedInstitution = event.target.value;
+      applyFilters();
+    });
+
+    el.departmentFilter.addEventListener("change", event => {
+      state.selectedDepartment = event.target.value;
+      state.selectedMunicipality = "";
+      el.municipalityFilter.value = "";
+
+      if (state.selectedDepartment) {
+        state.expandedDepartments.add(state.selectedDepartment);
+      }
+
+      applyFilters();
+    });
+
+    el.municipalityFilter.addEventListener("change", event => {
+      state.selectedMunicipality = event.target.value;
+      applyFilters();
+    });
+
+    el.modalityFilter.addEventListener("change", event => {
+      state.selectedModality = event.target.value;
+      applyFilters();
+    });
+
+    el.genderFilter.addEventListener("change", event => {
+      state.selectedGender = event.target.value;
+      applyFilters();
+    });
+
+    el.gestionFilter.addEventListener("change", event => {
+      state.selectedGestion = event.target.value;
+      applyFilters();
+    });
+
+    el.monthFilter.addEventListener("change", event => {
+      state.selectedMonth = event.target.value;
+      applyFilters();
+    });
+
+    el.tableLimit.addEventListener("change", () => {
+      renderTable();
+    });
+
+    el.mapMetric.addEventListener("change", () => {
+      renderMap();
+      renderDepartmentChart();
+    });
+
+    el.mapColor.addEventListener("change", () => {
+      renderMap();
+    });
+
+    el.resetBtn.addEventListener("click", resetFilters);
+    el.clearSelectionBtn.addEventListener("click", resetFilters);
+
+    function resetFilters() {
+      state.selectedInstitution = "";
+      state.selectedDepartment = "";
+      state.selectedMunicipality = "";
+      state.selectedModality = "";
+      state.selectedGender = "";
+      state.selectedGestion = "";
+      state.selectedMonth = "";
+      state.searchText = "";
+
+      el.globalSearch.value = "";
+      el.sideSearch.value = "";
+      el.institutionFilter.value = "";
+      el.departmentFilter.value = "";
+      el.municipalityFilter.value = "";
+      el.modalityFilter.value = "";
+      el.genderFilter.value = "";
+      el.gestionFilter.value = "";
+      el.monthFilter.value = "";
+
+      applyFilters();
+    }
+
+    window.addEventListener("resize", debounce(() => {
+      renderCharts();
+      renderMap();
+    }, 180));
+
+    /*
+      =========================================================
+      INICIO
+      =========================================================
+    */
+    loadData();
+  </script>
+</body>
+</html>
