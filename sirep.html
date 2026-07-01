@@ -1015,7 +1015,7 @@
       Está diseñado para colorearse dinámicamente según los datos.
       =========================================================
     */
-    const HONDURAS_DEPARTMENTS = [
+   /* const HONDURAS_DEPARTMENTS = [
       { name: "Copán", code: "CP", x: 70,  y: 180, w: 120, h: 76 },
       { name: "Ocotepeque", code: "OC", x: 40,  y: 270, w: 120, h: 76 },
       { name: "Lempira", code: "LE", x: 180, y: 285, w: 120, h: 76 },
@@ -1041,6 +1041,12 @@
       ESTADO GENERAL
       =========================================================
     */
+
+    
+const GEOJSON_URL = "./hn.json";
+
+let geoData = null;
+
     const state = {
       rawData: [],
       filteredData: [],
@@ -1147,6 +1153,28 @@
       Evita problemas entre Cortés/CORTES/cortes.
       =========================================================
     */
+async function loadGeoJSON() {
+
+    const response =
+        await fetch(GEOJSON_URL);
+
+    if (!response.ok) {
+
+        throw new Error(
+            "No se pudo cargar hn.json"
+        );
+    }
+
+    geoData =
+        await response.json();
+
+    console.log(
+      "GeoJSON cargado:",
+      geoData.features.length,
+      "departamentos"
+    );
+}
+    
     function normalizeText(text) {
       return String(text || "")
         .trim()
@@ -1703,7 +1731,7 @@
       background.setAttribute("fill", "transparent");
       svg.appendChild(background);
 
-      HONDURAS_DEPARTMENTS.forEach(dep => {
+      geoData.features.forEach(dep => {
         const key = normalizeText(dep.name);
         const stats = grouped[key] || {
           name: dep.name,
@@ -1760,8 +1788,97 @@
           : compactNumber(value);
         svg.appendChild(valueLabel);
       });
+
+
+geoData.features.forEach(
+ feature => {
+
+    const department =
+      normalizeText(
+        feature.properties.name
+      );
+
+    const stats =
+      grouped[department];
+
+    const value =
+      stats
+      ? stats[metric]
+      : 0;
+
+    const color =
+      getMapColor(
+        value,
+        maxValue,
+        colorScale
+      );
+
+    const coords =
+      feature.geometry.coordinates[0];
+
+    let pathData = "";
+
+    coords.forEach(
+      (point,index)=>{
+
+        const [x,y] =
+          projectPoint(
+            point[0],
+            point[1]
+          );
+
+        if(index===0)
+            pathData+=`M${x},${y}`;
+        else
+            pathData+=` L${x},${y}`;
+      }
+    );
+
+    pathData += " Z";
+
+    const path =
+      document.createElementNS(
+       "http://www.w3.org/2000/svg",
+       "path"
+      );
+
+    path.setAttribute(
+      "d",
+      pathData
+    );
+
+    path.setAttribute(
+      "fill",
+      color
+    );
+
+    path.setAttribute(
+      "class",
+      "map-cell"
+    );
+
+    svg.appendChild(path);
+
+ });
+      
     }
 
+    function projectPoint(
+    lon,
+    lat
+){
+
+    const scale = 55;
+
+    const x =
+       (lon + 90) * scale;
+
+    const y =
+       (17 - lat) * scale;
+
+    return [x,y];
+}
+    
     function getMapColor(value, maxValue, palette) {
       const ratio = maxValue ? value / maxValue : 0;
 
@@ -2511,8 +2628,18 @@
       =========================================================
       INICIO
       =========================================================
-    */
+    
     loadData();
+    */
+    
+(async () => {
+
+    await loadGeoJSON();
+
+    await loadData();
+
+})();
+
   </script>
 </body>
 </html>
